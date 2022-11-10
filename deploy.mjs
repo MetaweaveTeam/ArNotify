@@ -4,20 +4,24 @@ import fs from "fs";
 
 const walletFile = process.argv[2];
 
-console.log("Wallet file:", walletFile);
+if (!walletFile) {
+  console.log("Oops, you must pass a wallet file for this command to work.\nUsage: npm run deploy <your-wallet-keyfile.json>");
+  process.exit()
+}
+else
+  console.log("Wallet found:", walletFile);
 
-const pkg = JSON.parse(fs.readFileSync("./package.json"));
-
-assert(walletFile, "Wallet required!");
 const jwk = JSON.parse(fs.readFileSync(walletFile).toString());
 
-const arweave = Arweave.init({
+const arConfig = {
   host: "arweave.net",
   port: 443,
   protocol: "https",
   timeout: 20000,
   logging: false,
-});
+};
+
+const arweave = Arweave.init(arConfig);
 
 const data = fs.readFileSync("./dist/main.js");
 
@@ -35,7 +39,7 @@ arweave.createTransaction({ data }, jwk)
   console.log(`JS txid: ${txJS.id}`);
   fs.readFile("./dist/index.html", 'utf8', function(err, data){
     if (err) throw err;
-    data = data.replace('./main.js', `https://arweave.net/${txJS.id}`);
+    data = data.replace('./main.js', `${arConfig.protocol}://${arConfig.host}/${txJS.id}`);
     deployHtml(data, jwk);
   });
 })
@@ -57,5 +61,7 @@ function deployHtml(data, jwk) {
     if ( result.status != 200 ) throw result.statusText;
     console.log(`Result HTML: ${JSON.stringify(result)}`);
     console.log(`HTML txid: ${txHtml.id}`);
+
+    console.log(`\nYour hyperapp is ready! Visit ${arConfig.protocol}://${arConfig.host}/${txHtml.id}`)
   })
 }
