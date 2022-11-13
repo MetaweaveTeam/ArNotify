@@ -11,7 +11,7 @@ const router = createRouter({
       component: IndexView,
     },
     {
-      path: "/:txid?/about",
+      path: "/:txid/about",
       name: "about",
       component: AboutView,
     }
