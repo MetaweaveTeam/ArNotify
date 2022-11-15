@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import basicSsl from "@vitejs/plugin-basic-ssl";
 
 // This package adds css inside the js file
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
@@ -13,8 +14,12 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    cssInjectedByJsPlugin() // This package adds css inside the js file
+    cssInjectedByJsPlugin(), // This package adds css inside the js file
+    basicSsl(),
   ],
+  server: {
+    https: true,
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
