@@ -13,6 +13,7 @@ export const useMainStore = defineStore("main", {
       arweaveAddress: "",
       isAddressValid: false,
       isLoading: true,
+      error: "",
     };
   },
 
@@ -31,6 +32,9 @@ export const useMainStore = defineStore("main", {
     },
     setIsLoading(isLoading: any) {
       this.isLoading = isLoading;
+    },
+    setError(error: any) {
+      this.error = error;
     },
     setArweaveAddress(arweaveAddress: any) {
       this.arweaveAddress = arweaveAddress;

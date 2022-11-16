@@ -17,14 +17,22 @@ let windowWidth = ref(window.innerWidth)
 
 let loginStep1 = async () => {
   try {
-    let res = await axios.post(api + "/twitter/oauth/request_token");
     store.setIsLoading(true)
+    let res = await axios.post(api + "/twitter/oauth/request_token");
     window.location.href = res.data.url;
   } catch (e) {
     console.log(e);
+    store.setIsLoading(false)
   }
 };
 
+let denied = async () => {
+  let query = router.currentRoute.value.query;
+  if (query.denied) {
+    store.setError("User denied authorization to twitter")
+    router.push("/error")
+  }
+}
 
 let loginStep3 = async () => {
   let query = router.currentRoute.value.query;
@@ -35,14 +43,15 @@ let loginStep3 = async () => {
         `${api}/twitter/oauth/access_token?oauth_token=${query.oauth_token}&oauth_verifier=${query.oauth_verifier}`
       );
       let data = res.data;
-      store.setLoggedIn(true);
-      store.setUserInfo(data);
       localStorage.setItem("expiry", data.expiry);
       var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.pushState({ path: newurl }, '', newurl);
+      store.setLoggedIn(true);
+      store.setUserInfo(data);
       store.setIsLoading(false)
     } catch (e) {
       console.log(e);
+      store.setIsLoading(false)
     }
   }
 };
@@ -140,21 +149,26 @@ const handleAddressChange = (address: string) => {
 };
 
 
-
 const onWidthChange = () => windowWidth.value = window.innerWidth
 
 onMounted(async () => {
-
-  if (store.logged_in && !store.userInfo) {
+  let query = router.currentRoute.value.query;
+  if (store.logged_in && !store.userInfo && !query.oauth_verifier) {
     store.setIsLoading(true)
     await refreshUser();
     store.setIsLoading(false)
+
   } else if (store.logged_in && store.userInfo) {
     store.setIsLoading(false)
   }
 
+  if (!store.logged_in && !query.oauth_verifier) {
+    store.setIsLoading(false)
+  }
 
   await loginStep3();
+
+  await denied()
 
   window.addEventListener('resize', onWidthChange)
 });
@@ -162,8 +176,6 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
 </script>
 
 <template>
-
-
 
   <input type="checkbox" id="tc-modal" className="modal-toggle" />
   <div className="modal">
@@ -178,9 +190,10 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
   </div>
 
 
-  <Loading v-if="store.isLoading" />
-
-  <div v-if="!store.isLoading" class="widget shadow-xl ">
+  <div v-if="store.isLoading">
+    <Loading />
+  </div>
+  <div v-else class="widget shadow-xl ">
 
     <img class="meta_logo" src="../assets/logo.png" />
 
@@ -228,7 +241,10 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
       <div className="flex flex-row justify-center items-center justify-items-center my-3">
         <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
         <div class="main_text">
-          @{{ store.userInfo && store.userInfo.main_handle }}'s audience
+          @{{ store.userInfo && store.userInfo.main_handle }}'s audience on
+        </div>
+        <div>
+          <img class="twitter_logo mx-2" src="../assets/twitter_logo.png" />
         </div>
       </div>
       <div className="flex flex-row justify-center items-center justify-items-center my-3 gap-3">
@@ -316,7 +332,8 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
             <option value="more">More</option>
           </select>
         </div>
-        <button className="btn btn-success lg:btn-lg md:btn-md my-3" @click="() => subscribe(address)">
+        <button :disabled="!store.isAddressValid" className="btn btn-success lg:btn-lg md:btn-md my-3"
+          @click="() => subscribe(address)">
           Create new notification
         </button>
       </div>
