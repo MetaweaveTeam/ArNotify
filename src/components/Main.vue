@@ -1,39 +1,46 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useMainStore } from "@/stores/store";
-import { inject } from "vue";
+import { inject, ref } from "vue";
 import type { Router } from "vue-router";
-
+import { TC } from "../types";
+import Loading from "./Loading.vue";
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 
 const store = useMainStore();
 
-let address = "";
+let address = ""
+let selected = "argora"
+let windowWidth = ref(window.innerWidth)
 
 let loginStep1 = async () => {
   try {
     let res = await axios.post(api + "/twitter/oauth/request_token");
+    store.setIsLoading(true)
     window.location.href = res.data.url;
   } catch (e) {
     console.log(e);
   }
 };
 
+
 let loginStep3 = async () => {
   let query = router.currentRoute.value.query;
   // we check if we have oauth_token && oauth_verifier
-  if (query.oauth_token && query.oauth_verifier) {
+  if (query.oauth_token && query.oauth_verifier && !store.userInfo) {
     try {
       let res = await axios.post(
         `${api}/twitter/oauth/access_token?oauth_token=${query.oauth_token}&oauth_verifier=${query.oauth_verifier}`
       );
       let data = res.data;
       store.setLoggedIn(true);
-      localStorage.setItem("expiry", data.expiry);
       store.setUserInfo(data);
-      window.location.search = "";
+      localStorage.setItem("expiry", data.expiry);
+      var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({ path: newurl }, '', newurl);
+      store.setIsLoading(false)
     } catch (e) {
       console.log(e);
     }
@@ -46,6 +53,19 @@ const logout = async () => {
     store.setLoggedIn(false);
     await axios({
       url: `${api}/logout`,
+      method: "POST",
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const disableNotifications = async () => {
+  try {
+    localStorage.clear();
+    store.setLoggedIn(false);
+    await axios({
+      url: `${api}/twitter/exit`,
       method: "POST",
     });
   } catch (error) {
@@ -97,97 +117,282 @@ const unsubscribe = async (address: string) => {
   }
 };
 
+const contributing = () => {
+  window.open(
+    "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
+    "_blank"
+  );
+};
+
+
+const handleProtocolChange = (selected: string) => {
+  if (selected === "argora" || selected === "Data Protocol") {
+    return
+  }
+  window.open(
+    "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
+    "_blank"
+  );
+};
+
+const handleAddressChange = (address: string) => {
+  store.setArweaveAddress(address)
+};
+
+
+
+const onWidthChange = () => windowWidth.value = window.innerWidth
+
 onMounted(async () => {
+
+  if (store.logged_in && !store.userInfo) {
+    store.setIsLoading(true)
+    await refreshUser();
+    store.setIsLoading(false)
+  } else if (store.logged_in && store.userInfo) {
+    store.setIsLoading(false)
+  }
+
+
   await loginStep3();
 
-  if (store.logged_in) {
-    await refreshUser();
-  }
+  window.addEventListener('resize', onWidthChange)
 });
+onUnmounted(() => window.removeEventListener('resize', onWidthChange))
 </script>
 
 <template>
-  <div class="widget shadow-xl">
-    <img src="../assets/logo.png" />
-    <div>arNotify</div>
-    <div>Subscribe to arweave protocols and notify your audience about it</div>
-    <div>Select your notification medium</div>
-    <button @click="
-      () => {
-        store.setLoggedIn(true);
-      }
-    ">
-      Logged in: {{ store.logged_in ? "true" : "false" }}
-    </button>
-    <button className="btn gap-2" @click="loginStep1">
-      <!-- <img 
-        class="twitter_logo"
-        src="../assets/twitter_logo.png"/> -->
-      Sign in with Twitter
-    </button>
-    <button disabled="true" className="btn gap-2" @click="loginStep1">
-      <!-- <img 
-        class="twitter_logo"
-        src="../assets/twitter_logo.png"/> -->
-      Sign in with Instagram
-    </button>
 
-    <div>
-      {{ store.userInfo && store.userInfo.main_id }}
-      {{ store.userInfo && store.userInfo.main_handle }}
-      {{ store.userInfo && store.userInfo.photo_url }}
-      {{ store.userInfo && store.userInfo.expiry }}
+
+
+  <input type="checkbox" id="tc-modal" className="modal-toggle" />
+  <div className="modal">
+    <div className="modal-box">
+      <p className="py-4">{{ TC }}</p>
+      <div className="modal-action">
+        <label for="tc-modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <label htmlFor="tc-modal" @click="loginStep1" className="btn btn-primary">I agree to the terms and
+          conditions</label>
+      </div>
     </div>
-    <button className="btn gap-2" @click="refreshUser">REFRESH ME!</button>
+  </div>
 
-    <input v-model="address" type="text" placeholder="Type here" className="input w-full max-w-xs" />
-    <button className="btn gap-2" @click="() => subscribe(address)">
-      Subscribe!
-    </button>
 
-    <button v-if="store.logged_in" className="btn gap-2" @click="logout">
-      <!-- <img 
-        class="twitter_logo"
-        src="../assets/twitter_logo.png"/> -->
-      Logout
-    </button>
+  <Loading v-if="store.isLoading" />
 
-    Subscriptions:
-    <li v-for="(item, index) in store.subscriptions">
-      {{ index }}. {{ item }}
+  <div v-if="!store.isLoading" class="widget shadow-xl ">
 
-      <button className="btn gap-2" @click="() => unsubscribe(item.arweave_address as any)">
-        UnSubscribe!
-      </button>
-    </li>
+    <img class="meta_logo" src="../assets/logo.png" />
+
+    <!-- IF LOGGED OUT -->
+    <div v-if="!store.logged_in">
+
+      <div className="first_box">
+        <div className="header">arNotify</div>
+
+        <div className="main_text">
+          Subscribe to arweave protocols and notify your audience about it
+        </div>
+        <div className="main_text">Select your notification medium</div>
+      </div>
+
+      <div class="spacing">
+        <label htmlFor="tc-modal" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
+          <div className="flex flex-row justify-center items-center justify-items-center">
+            <div class="flex-none">
+              <img class="twitter_logo" src="../assets/twitter_logo.png" />
+            </div>
+            <div class="flex-1 w-64 button_text">Sign in with Twitter</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="spacing">
+        <button @click="contributing()" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
+          <div className="flex flex-row justify-center items-center justify-items-center">
+            <div class="flex-none">
+              <img class="insta_logo" src="../assets/instagram_logo.webp" />
+            </div>
+            <div class="flex-1 w-64">Sign in with Instagram</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+
+
+    <!-- IF LOGGED IN -->
+    <div v-if="store.userInfo && store.logged_in" class="w-full">
+      <div class="main_text">Notification medium</div>
+
+      <div className="flex flex-row justify-center items-center justify-items-center my-3">
+        <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
+        <div class="main_text">
+          @{{ store.userInfo && store.userInfo.main_handle }}'s audience
+        </div>
+      </div>
+      <div className="flex flex-row justify-center items-center justify-items-center my-3 gap-3">
+        <button v-if="store.logged_in" className="btn btn-error my_buttons button_text" @click="disableNotifications">
+          Disable notifications
+        </button>
+        <button v-if="store.logged_in" className="btn btn-info" @click="logout">
+          Logout
+        </button>
+      </div>
+
+      <div class="divider"></div>
+    </div>
+    <div v-if="store.logged_in && store.userInfo" class="w-full">
+      <div class="main_text">Notifications list</div>
+
+      <div v-if="store.subscriptions.length > 0" className="overflow-x-auto my-3">
+        <table className=" w-full table-compact">
+          <thead>
+            <tr>
+              <th>Arweave address</th>
+              <th>Protocol</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="store.subscriptions.length > 0" v-for="(item, index) in store.subscriptions">
+              <td>
+                <a :href="
+                  'https://r.metaweave.xyz/u/' + item.arweave_address
+                " class="wallet" target="_blank">
+                  <div v-if="windowWidth < 550"> {{ item.arweave_address.substring(0, 15) + "..." }}</div>
+                  <div v-else> {{ item.arweave_address }}</div>
+                </a>
+              </td>
+              <td>
+                <div class="" v-if="item.protocol_name === 'argora'"><a href="https://metaweave.xyz" target="_blank">
+                    Argora (Metaweave.xyz)
+                  </a></div>
+                <div class="" v-else></div>
+              </td>
+              <td>
+                <button className="btn btn-xs btn-error " @click="() => unsubscribe(item.arweave_address as any)">
+                  X
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-if="store.subscriptions.length === 0">
+        No notifications set for this medium yet.
+      </div>
+      <div class="divider"></div>
+
+
+      <!-- <Loading /> -->
+      <div className="flex flex-col justify-center items-center justify-items-center my-3">
+        <div class="form-control w-full">
+          <label class="label ">
+            <span class="label-text main_text"> Arweave Wallet Address</span>
+          </label>
+
+          <input v-model="address" v-on:input="() => handleAddressChange(address)" type="text"
+            className="input w-full  input-bordered" />
+          <label class="label">
+            <span class="label-text-alt profile">
+              <div v-if="!store.isAddressValid">❗ Invalid wallet address format</div>
+              <div v-else><a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">✔️ See user
+                  profile</a></div>
+            </span>
+          </label>
+        </div>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text main_text"> Data Protocol</span>
+          </label>
+
+          <select class="select select-bordered w-full  " v-model="selected"
+            @change="() => handleProtocolChange(selected)">
+            <option>Data Protocol</option>
+            <option value="argora" selected>Argora (Metaweave.xyz)</option>
+            <option value="permapages">permapages</option>
+            <option value="more">More</option>
+          </select>
+        </div>
+        <button className="btn btn-success lg:btn-lg md:btn-md my-3" @click="() => subscribe(address)">
+          Create new notification
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+a:link {
+  color: blue;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.header {
+  font-size: 30px;
+}
+
+.my_buttons {
+  max-width: 400px;
+}
+
+.spacing {
+  margin-bottom: 20px;
+}
+
+.wallet {
+  font-family: "monospace";
+}
+
+.main_text {
+  font-size: 20px;
+}
+
+.first_box {
+  margin-bottom: 50px;
+}
+
+.profile_pic {
+  max-width: 48px;
+  max-height: 48px;
+  margin-right: 10px;
+}
+
 .widget {
   display: flex;
   border-radius: 2rem;
-  padding: 1rem;
+  padding: 2rem;
   box-sizing: border-box;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-
-  background: rgb(188, 0, 255);
-  background: -moz-linear-gradient(38deg,
-      rgba(188, 0, 255, 1) 19%,
-      rgba(248, 23, 181, 1) 100%);
-  background: -webkit-linear-gradient(38deg,
-      rgba(188, 0, 255, 1) 19%,
-      rgba(248, 23, 181, 1) 100%);
-  background: linear-gradient(38deg,
-      rgba(188, 0, 255, 1) 19%,
-      rgba(248, 23, 181, 1) 100%);
+  height: 100vh;
 }
 
-#twitter_logo {
-  width: "50px";
-  height: "50px";
+.twitter_logo {
+  width: 40px;
+  height: 40px;
+}
+
+.insta_logo {
+  width: 40px;
+  height: 40px;
+}
+
+.meta_logo {
+  width: 100px;
+  height: 100px;
+}
+
+.button_text {
+  color: "white";
+}
+
+.profile {
+  color: "#18152e"
 }
 </style>

@@ -1,13 +1,6 @@
 import { defineStore } from "pinia";
-
-type Subscription = {
-  id: String;
-  main_id: String;
-  arweave_address: String;
-  protocol_name: String;
-  from_block_height: String;
-  is_active: Number;
-};
+import type { Subscription } from "../types";
+import Arweave from "arweave";
 
 export const useMainStore = defineStore("main", {
   state: () => {
@@ -17,6 +10,9 @@ export const useMainStore = defineStore("main", {
       subscriptions: [] as Subscription[],
       userInfo: null as any,
       subscribePending: false,
+      arweaveAddress: "",
+      isAddressValid: false,
+      isLoading: true,
     };
   },
 
@@ -32,6 +28,24 @@ export const useMainStore = defineStore("main", {
     },
     setSubscriptions(subscriptions: any) {
       this.subscriptions = subscriptions;
+    },
+    setIsLoading(isLoading: any) {
+      this.isLoading = isLoading;
+    },
+    setArweaveAddress(arweaveAddress: any) {
+      this.arweaveAddress = arweaveAddress;
+
+      try {
+        let key = Arweave.utils.b64UrlToBuffer(arweaveAddress);
+
+        if (key.length === 32) {
+          this.isAddressValid = true;
+        } else {
+          this.isAddressValid = false;
+        }
+      } catch (e) {
+        this.isAddressValid = false;
+      }
     },
   },
 });
