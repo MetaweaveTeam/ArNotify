@@ -104,6 +104,7 @@ const subscribe = (address: string) => {
         data: { address: address, protocol: "argora" },
       });
 
+
       await refreshUser();
       store.setSubscribePending(false);
     } catch (error) {
