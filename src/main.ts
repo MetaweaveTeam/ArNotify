@@ -12,16 +12,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 axios.defaults.withCredentials = true;
-// only for dev
-axios.interceptors.request.use(
-  (config) => {
-    (config as any).headers["ngrok-skip-browser-warning"] = `111`;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+
 app.use(VueAxios, axios);
 
 app.provide("axios", app.config.globalProperties.axios);

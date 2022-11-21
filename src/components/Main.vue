@@ -5,10 +5,10 @@ import { inject, ref } from "vue";
 import type { Router } from "vue-router";
 import { TC } from "../types";
 import Loading from "./Loading.vue";
+
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
-
 const store = useMainStore();
 
 let address = ""
@@ -44,10 +44,11 @@ let loginStep3 = async () => {
       );
       let data = res.data;
       localStorage.setItem("expiry", data.expiry);
-      var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.pushState({ path: newurl }, '', newurl);
+      var newURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({ path: newURL }, '', newURL);
       store.setLoggedIn(true);
       store.setUserInfo(data);
+      await refreshUser()
       store.setIsLoading(false)
     } catch (e) {
       console.log(e);
@@ -94,36 +95,39 @@ let refreshUser = async () => {
   }
 };
 
-const subscribe = (address: string) => {
-  (async () => {
-    store.setSubscribePending(true);
-    try {
-      await axios({
-        url: `${api}/twitter/subscribe`,
-        method: "POST",
-        data: { address: address, protocol: "argora" },
-      });
+const subscribe = async (address: string) => {
+  store.setSubscribePending(true);
+  try {
+    await axios({
+      url: `${api}/twitter/subscribe`,
+      method: "POST",
+      data: { address: address, protocol: "argora" },
+    });
 
 
-      await refreshUser();
-      store.setSubscribePending(false);
-    } catch (error) {
-      console.error(error);
-      store.setSubscribePending(false);
-    }
-  })();
+    await refreshUser();
+    store.setSubscribePending(false);
+  } catch (error) {
+    console.error(error);
+    store.setSubscribePending(false);
+  }
 };
 
 const unsubscribe = async (address: string) => {
   try {
+    store.setSubscribePending(true);
+
     await axios({
       url: `${api}/twitter/unsubscribe`,
       method: "POST",
       data: { address: address, protocol: "argora" },
     });
     await refreshUser();
+    store.setSubscribePending(false);
+
   } catch (error) {
     console.error(error);
+    store.setSubscribePending(false);
   }
 };
 
@@ -135,7 +139,7 @@ const contributing = () => {
 };
 
 
-const handleProtocolChange = (selected: string) => {
+const handleProtocolChangeRedirect = (selected: string) => {
   if (selected === "argora" || selected === "Data Protocol") {
     return
   }
@@ -304,8 +308,8 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
 
 
       <!-- <Loading /> -->
-      <div className="flex flex-col justify-center items-center justify-items-center my-3">
-        <div class="form-control w-full">
+      <div className="flex flex-col justify-center items-center justify-items-center my-3 ">
+        <div class="form-control w-full max-w-md">
           <label class="label ">
             <span class="label-text main_text"> Arweave Wallet Address</span>
           </label>
@@ -320,13 +324,13 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
             </span>
           </label>
         </div>
-        <div class="form-control w-full">
+        <div class="form-control w-full max-w-md">
           <label class="label">
             <span class="label-text main_text"> Data Protocol</span>
           </label>
 
           <select class="select select-bordered w-full  " v-model="selected"
-            @change="() => handleProtocolChange(selected)">
+            @change="() => handleProtocolChangeRedirect(selected)">
             <option>Data Protocol</option>
             <option value="argora" selected>Argora (Metaweave.xyz)</option>
             <option value="permapages">permapages</option>
