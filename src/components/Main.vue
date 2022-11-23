@@ -198,6 +198,7 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
   <div v-if="store.isLoading">
     <Loading />
   </div>
+
   <div v-else class="widget shadow-xl ">
 
     <img class="meta_logo" src="../assets/logo.png" />
@@ -337,8 +338,8 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
             <option value="more">More</option>
           </select>
         </div>
-        <button :disabled="!store.isAddressValid" className="btn btn-success lg:btn-lg md:btn-md my-3"
-          @click="() => subscribe(address)">
+        <button :disabled="!store.isAddressValid" class="btn btn-success lg:btn-lg md:btn-md my-3"
+          v-bind:class="{ loading: store.subscribePending }" @click="() => subscribe(address)">
           Create new notification
         </button>
       </div>
