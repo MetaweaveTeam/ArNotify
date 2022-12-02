@@ -5,34 +5,37 @@ import { inject, ref } from "vue";
 import type { Router } from "vue-router";
 import { TC } from "../types";
 import Loading from "./Loading.vue";
+import InstagramIcon from "@/components/logos/InstagramIcon.vue";
+import TwitterIcon from "@/components/logos/TwitterIcon.vue";
+
 
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
 
-let address = ""
-let selected = "argora"
-let windowWidth = ref(window.innerWidth)
+let address = "";
+let selected = "argora";
+let windowWidth = ref(window.innerWidth);
 
 let loginStep1 = async () => {
   try {
-    store.setIsLoading(true)
+    store.setIsLoading(true);
     let res = await axios.post(api + "/twitter/oauth/request_token");
     window.location.href = res.data.url;
   } catch (e) {
     console.log(e);
-    store.setIsLoading(false)
+    store.setIsLoading(false);
   }
 };
 
 let denied = async () => {
   let query = router.currentRoute.value.query;
   if (query.denied) {
-    store.setError("User denied authorization to twitter")
-    router.push("/error")
+    store.setError("User denied authorization to twitter");
+    router.push("/error");
   }
-}
+};
 
 let loginStep3 = async () => {
   let query = router.currentRoute.value.query;
@@ -44,15 +47,19 @@ let loginStep3 = async () => {
       );
       let data = res.data;
       localStorage.setItem("expiry", data.expiry);
-      var newURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.pushState({ path: newURL }, '', newURL);
+      var newURL =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname;
+      window.history.pushState({ path: newURL }, "", newURL);
       store.setLoggedIn(true);
       store.setUserInfo(data);
-      await refreshUser()
-      store.setIsLoading(false)
+      await refreshUser();
+      store.setIsLoading(false);
     } catch (e) {
       console.log(e);
-      store.setIsLoading(false)
+      store.setIsLoading(false);
     }
   }
 };
@@ -104,7 +111,6 @@ const subscribe = async (address: string) => {
       data: { address: address, protocol: "argora" },
     });
 
-
     await refreshUser();
     store.setSubscribePending(false);
   } catch (error) {
@@ -124,7 +130,6 @@ const unsubscribe = async (address: string) => {
     });
     await refreshUser();
     store.setSubscribePending(false);
-
   } catch (error) {
     console.error(error);
     store.setSubscribePending(false);
@@ -138,10 +143,9 @@ const contributing = () => {
   );
 };
 
-
 const handleProtocolChangeRedirect = (selected: string) => {
   if (selected === "argora" || selected === "Data Protocol") {
-    return
+    return;
   }
   window.open(
     "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
@@ -150,38 +154,35 @@ const handleProtocolChangeRedirect = (selected: string) => {
 };
 
 const handleAddressChange = (address: string) => {
-  store.setArweaveAddress(address)
+  store.setArweaveAddress(address);
 };
 
-
-const onWidthChange = () => windowWidth.value = window.innerWidth
+const onWidthChange = () => (windowWidth.value = window.innerWidth);
 
 onMounted(async () => {
   let query = router.currentRoute.value.query;
   if (store.logged_in && !store.userInfo && !query.oauth_verifier) {
-    store.setIsLoading(true)
+    store.setIsLoading(true);
     await refreshUser();
-    store.setIsLoading(false)
-
+    store.setIsLoading(false);
   } else if (store.logged_in && store.userInfo) {
-    store.setIsLoading(false)
+    store.setIsLoading(false);
   }
 
   if (!store.logged_in && !query.oauth_verifier) {
-    store.setIsLoading(false)
+    store.setIsLoading(false);
   }
 
   await loginStep3();
 
-  await denied()
+  await denied();
 
-  window.addEventListener('resize', onWidthChange)
+  window.addEventListener("resize", onWidthChange);
 });
-onUnmounted(() => window.removeEventListener('resize', onWidthChange))
+onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 </script>
 
 <template>
-
   <input type="checkbox" id="tc-modal" className="modal-toggle" />
   <div className="modal">
     <div className="modal-box">
@@ -194,18 +195,15 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
     </div>
   </div>
 
-
   <div v-if="store.isLoading">
     <Loading />
   </div>
 
-  <div v-else class="widget shadow-xl ">
-
+  <div v-else class="widget shadow-xl">
     <img class="meta_logo" src="../assets/logo.png" />
 
     <!-- IF LOGGED OUT -->
     <div v-if="!store.logged_in">
-
       <div className="first_box">
         <div className="header">arNotify</div>
 
@@ -219,7 +217,7 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
         <label htmlFor="tc-modal" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
           <div className="flex flex-row justify-center items-center justify-items-center">
             <div class="flex-none">
-              <img class="twitter_logo" src="../assets/twitter_logo.png" />
+              <TwitterIcon class="twitter_logo" />
             </div>
             <div class="flex-1 w-64 button_text">Sign in with Twitter</div>
           </div>
@@ -230,15 +228,13 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
         <button @click="contributing()" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
           <div className="flex flex-row justify-center items-center justify-items-center">
             <div class="flex-none">
-              <img class="insta_logo" src="../assets/instagram_logo.webp" />
+              <InstagramIcon class="insta_logo" />
             </div>
             <div class="flex-1 w-64">Sign in with Instagram</div>
           </div>
         </button>
       </div>
     </div>
-
-
 
     <!-- IF LOGGED IN -->
     <div v-if="store.userInfo && store.logged_in" class="w-full">
@@ -250,7 +246,7 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
           @{{ store.userInfo && store.userInfo.main_handle }}'s audience on
         </div>
         <div>
-          <img class="twitter_logo mx-2" src="../assets/twitter_logo.png" />
+          <TwitterIcon class="twitter_logo mx-2" />
         </div>
       </div>
       <div className="flex flex-row justify-center items-center justify-items-center my-3 gap-3">
@@ -279,17 +275,19 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
           <tbody>
             <tr v-if="store.subscriptions.length > 0" v-for="(item, index) in store.subscriptions">
               <td>
-                <a :href="
-                  'https://r.metaweave.xyz/u/' + item.arweave_address
-                " class="wallet" target="_blank">
-                  <div v-if="windowWidth < 550"> {{ item.arweave_address.substring(0, 15) + "..." }}</div>
-                  <div v-else> {{ item.arweave_address }}</div>
+                <a :href="'https://r.metaweave.xyz/u/' + item.arweave_address" class="wallet" target="_blank">
+                  <div v-if="windowWidth < 550">
+                    {{ item.arweave_address.substring(0, 15) + "..." }}
+                  </div>
+                  <div v-else>{{ item.arweave_address }}</div>
                 </a>
               </td>
               <td>
-                <div class="" v-if="item.protocol_name === 'argora'"><a href="https://metaweave.xyz" target="_blank">
+                <div class="" v-if="item.protocol_name === 'argora'">
+                  <a href="https://metaweave.xyz" target="_blank">
                     Argora (Metaweave.xyz)
-                  </a></div>
+                  </a>
+                </div>
                 <div class="" v-else></div>
               </td>
               <td>
@@ -307,11 +305,10 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
       </div>
       <div class="divider"></div>
 
-
       <!-- <Loading /> -->
       <div className="flex flex-col justify-center items-center justify-items-center my-3 ">
         <div class="form-control w-full max-w-md">
-          <label class="label ">
+          <label class="label">
             <span class="label-text main_text"> Arweave Wallet Address</span>
           </label>
 
@@ -319,9 +316,12 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
             className="input w-full  input-bordered" />
           <label class="label">
             <span class="label-text-alt profile">
-              <div v-if="!store.isAddressValid">❗ Invalid wallet address format</div>
-              <div v-else><a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">✔️ See user
-                  profile</a></div>
+              <div v-if="!store.isAddressValid">
+                ❗ Invalid wallet address format
+              </div>
+              <div v-else>
+                <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">✔️ See user profile</a>
+              </div>
             </span>
           </label>
         </div>
@@ -330,7 +330,7 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange))
             <span class="label-text main_text"> Data Protocol</span>
           </label>
 
-          <select class="select select-bordered w-full  " v-model="selected"
+          <select class="select select-bordered w-full" v-model="selected"
             @change="() => handleProtocolChangeRedirect(selected)">
             <option>Data Protocol</option>
             <option value="argora" selected>Argora (Metaweave.xyz)</option>
@@ -416,6 +416,6 @@ a:link {
 }
 
 .profile {
-  color: "#18152e"
+  color: "#18152e";
 }
 </style>
