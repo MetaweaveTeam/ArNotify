@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Main from "@/components/Main.vue";
+import Error from "@/components/Error.vue";
 
 </script> 
 
 <template>
   <main class="p-3 paper">
-    <Main />
+    <Error />
   </main>
 
 </template>

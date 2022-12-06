@@ -29,4 +29,6 @@ coverage
 
 deploy.sh
 
+commit.sh
+
 .env
