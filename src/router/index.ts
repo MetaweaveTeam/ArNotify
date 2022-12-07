@@ -6,12 +6,12 @@ const routes = () => {
   if (process.env.NODE_ENV === "development") {
     return [
       {
-        path: "/:txid?/",
+        path: "/",
         name: "home",
         component: IndexView,
       },
       {
-        path: "/:txid?/error",
+        path: "/error",
         name: "error",
         component: ErrorView,
       },
@@ -19,12 +19,12 @@ const routes = () => {
   } else {
     return [
       {
-        path: "/:txid",
+        path: "/",
         name: "home",
         component: IndexView,
       },
       {
-        path: "/:txid/error",
+        path: "/error",
         name: "error",
         component: ErrorView,
       },
