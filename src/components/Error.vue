@@ -6,13 +6,18 @@ const router: Router = inject("router")!;
 
 let store = useMainStore();
 
-if (!store.error) {
-    router.push("/");
-}
-
 const returnHome = () => {
-    router.push("/");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+        router.push(`/${txid}`);
+    } else {
+        router.push("/");
+    }
 };
+
+if (!store.error) {
+    returnHome();
+}
 </script>
 
 <template>

@@ -25,7 +25,12 @@ let loginStep1 = async () => {
   } catch (e: any) {
     console.log(e);
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
   }
 };
 
@@ -33,7 +38,12 @@ let denied = async () => {
   let query = router.currentRoute.value.query;
   if (query.denied) {
     store.setError("User denied authorization to twitter");
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
   }
 };
 
@@ -60,7 +70,12 @@ let loginStep3 = async () => {
     } catch (e: any) {
       console.log(e);
       store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-      router.push("/error");
+      const txid = router.currentRoute.value.params.txid;
+      if (txid) {
+        router.push(`/${txid}/error`);
+      } else {
+        router.push("/error");
+      }
       store.setIsLoading(false);
     }
   }
@@ -76,7 +91,12 @@ const logout = async () => {
     });
   } catch (e: any) {
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
     console.error(e);
   }
 };
@@ -91,7 +111,12 @@ const disableNotifications = async () => {
     });
   } catch (e: any) {
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
     console.error(e);
   }
 };
@@ -105,7 +130,12 @@ let refreshUser = async () => {
     store.setSubscriptions(subs.data.subscriptions);
   } catch (e: any) {
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
     console.log(e);
   }
 };
@@ -124,7 +154,12 @@ const subscribe = async (address: string) => {
   } catch (e: any) {
     console.error(e);
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
     store.setSubscribePending(false);
   }
 };
@@ -143,7 +178,12 @@ const unsubscribe = async (address: string) => {
   } catch (e: any) {
     console.error(e);
     store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
-    router.push("/error");
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
     store.setSubscribePending(false);
   }
 };
