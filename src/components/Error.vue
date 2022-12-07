@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/stores/store";
-import { inject, ref } from "vue";
+import { inject } from "vue";
 import type { Router } from "vue-router";
 const router: Router = inject("router")!;
 
@@ -17,7 +17,7 @@ const returnHome = () => {
 
 <template>
     <div class="widget shadow-xl">
-        <img class="meta_logo" src="../assets/logo.png" />
+        <img class="meta_logo" src="https://arweave.net/fLKdBlb-6UTMEyQMzFoTb0osGa0oTzZmSebGw1TMgvM" />
         <div className="flex flex-col justify-center items-center justify-items-center gap-10">
             <div class="header">Something went wrong :(</div>
 

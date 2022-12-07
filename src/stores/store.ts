@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import type { Subscription } from "../types";
 import Arweave from "arweave";
+import { inject, ref } from "vue";
+import type { Router } from "vue-router";
 
 export const useMainStore = defineStore("main", {
   state: () => {

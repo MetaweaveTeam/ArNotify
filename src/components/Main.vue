@@ -22,9 +22,10 @@ let loginStep1 = async () => {
     store.setIsLoading(true);
     let res = await axios.post(api + "/twitter/oauth/request_token");
     window.location.href = res.data.url;
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
-    store.setIsLoading(false);
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
   }
 };
 
@@ -56,8 +57,10 @@ let loginStep3 = async () => {
       store.setUserInfo(data);
       await refreshUser();
       store.setIsLoading(false);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+      router.push("/error");
       store.setIsLoading(false);
     }
   }
@@ -71,8 +74,10 @@ const logout = async () => {
       url: `${api}/logout`,
       method: "POST",
     });
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
+    console.error(e);
   }
 };
 
@@ -84,8 +89,10 @@ const disableNotifications = async () => {
       url: `${api}/twitter/exit`,
       method: "POST",
     });
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
+    console.error(e);
   }
 };
 
@@ -96,7 +103,9 @@ let refreshUser = async () => {
 
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);
-  } catch (e) {
+  } catch (e: any) {
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
     console.log(e);
   }
 };
@@ -112,8 +121,10 @@ const subscribe = async (address: string) => {
 
     await refreshUser();
     store.setSubscribePending(false);
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    console.error(e);
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
     store.setSubscribePending(false);
   }
 };
@@ -129,8 +140,10 @@ const unsubscribe = async (address: string) => {
     });
     await refreshUser();
     store.setSubscribePending(false);
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    console.error(e);
+    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${e}`);
+    router.push("/error");
     store.setSubscribePending(false);
   }
 };
@@ -401,10 +414,6 @@ a:link {
 .insta_logo {
   width: 40px;
   height: 40px;
-}
-
-.meta_logo {
-  height: 150px;
 }
 
 .button_text {
