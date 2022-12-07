@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import Main from "@/components/Main.vue";
-
-</script> 
+</script>
 
 <template>
   <main class="p-3 paper">
     <Main />
   </main>
-
 </template>
 
 <style>
 .paper {
-  height: 100%
+  height: 100%;
 }
 </style>

@@ -8,7 +8,6 @@ import Loading from "./Loading.vue";
 import InstagramIcon from "@/components/logos/InstagramIcon.vue";
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
 
-
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
@@ -200,13 +199,11 @@ onUnmounted(() => window.removeEventListener("resize", onWidthChange));
   </div>
 
   <div v-else class="widget shadow-xl">
-    <img class="meta_logo" src="../assets/logo.png" />
+    <img class="meta_logo" src="https://arweave.net/fLKdBlb-6UTMEyQMzFoTb0osGa0oTzZmSebGw1TMgvM" />
 
     <!-- IF LOGGED OUT -->
     <div v-if="!store.logged_in">
       <div className="first_box">
-        <div className="header">arNotify</div>
-
         <div className="main_text">
           Subscribe to arweave protocols and notify your audience about it
         </div>
@@ -407,8 +404,7 @@ a:link {
 }
 
 .meta_logo {
-  width: 100px;
-  height: 100px;
+  height: 150px;
 }
 
 .button_text {

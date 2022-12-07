@@ -4,7 +4,7 @@ import Arweave from "arweave";
 
 export const useMainStore = defineStore("main", {
   state: () => {
-    let expiry = localStorage.getItem("expiry");
+    const expiry = localStorage.getItem("expiry");
     return {
       logged_in: expiry ? +expiry > Date.now() : false,
       subscriptions: [] as Subscription[],
@@ -40,7 +40,7 @@ export const useMainStore = defineStore("main", {
       this.arweaveAddress = arweaveAddress;
 
       try {
-        let key = Arweave.utils.b64UrlToBuffer(arweaveAddress);
+        const key = Arweave.utils.b64UrlToBuffer(arweaveAddress);
 
         if (key.length === 32) {
           this.isAddressValid = true;

@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import Error from "@/components/Error.vue";
-
-</script> 
+</script>
 
 <template>
   <main class="p-3 paper">
     <Error />
   </main>
-
 </template>
 
 <style>
 .paper {
-  height: 100%
+  height: 100%;
 }
 </style>
