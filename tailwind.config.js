@@ -6,13 +6,22 @@ module.exports = {
     themes: [
       {
         arnotify: {
-          primary: "#bc00ff",
-          secondary: "#f817b5",
-          accent: "#37cdbe",
-          neutral: "#3d4451",
+          primary: "#EE16AD",
+          secondary: "#bc00ff",
+          accent: "#f817b5",
+          neutral: "#2d1b69",
           "base-100": "#ffffff",
         },
       },
     ],
   },
 };
+
+/*
+Greens:
+#8FEE9F
+#B9F43E
+
+pink:
+#EE16AD
+*/

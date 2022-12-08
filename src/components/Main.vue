@@ -7,6 +7,7 @@ import { TC } from "../types";
 import Loading from "./Loading.vue";
 import InstagramIcon from "@/components/logos/InstagramIcon.vue";
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
+import DiscordIcon from "@/components/logos/DiscordIcon.vue";
 
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
@@ -254,38 +255,24 @@ onUnmounted(() => window.removeEventListener("resize", onWidthChange));
   </div>
 
   <div v-else class="widget shadow-xl">
-    <img class="meta_logo" src="https://arweave.net/fLKdBlb-6UTMEyQMzFoTb0osGa0oTzZmSebGw1TMgvM" />
+    <img className="w-screen max-w-xl" src="https://arweave.net/fLKdBlb-6UTMEyQMzFoTb0osGa0oTzZmSebGw1TMgvM" />
 
     <!-- IF LOGGED OUT -->
     <div v-if="!store.logged_in">
-      <div className="first_box">
-        <div className="main_text">
-          Subscribe to arweave protocols and notify your audience about it
-        </div>
-        <div className="main_text">Select your notification medium</div>
-      </div>
-
-      <div class="spacing">
-        <label htmlFor="tc-modal" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
-          <div className="flex flex-row justify-center items-center justify-items-center">
-            <div class="flex-none">
-              <TwitterIcon class="twitter_logo" />
-            </div>
-            <div class="flex-1 w-64 button_text">Sign in with Twitter</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="spacing">
-        <button @click="contributing()" className="btn btn-primary my_buttons lg:btn-lg md:btn-md ">
-          <div className="flex flex-row justify-center items-center justify-items-center">
-            <div class="flex-none">
-              <InstagramIcon class="insta_logo" />
-            </div>
-            <div class="flex-1 w-64">Sign in with Instagram</div>
-          </div>
-        </button>
-      </div>
+      <h1 className="text-4xl">Arweave native notification protocol.</h1>
+      <h2 className="text-3xl text-secondary">Select your notification medium</h2>
+      <label htmlFor="tc-modal" className="btn gap-2 btn-primary">
+        <TwitterIcon />
+        Twitter
+      </label>
+      <button @click="contributing()" className="btn gap-2 btn-neutral">
+        <InstagramIcon />
+        Instagram (later)
+      </button>
+      <button @click="contributing()" className="btn gap-2 btn-neutral">
+        <DiscordIcon />
+        Discord (soon)
+      </button>
     </div>
 
     <!-- IF LOGGED IN -->
