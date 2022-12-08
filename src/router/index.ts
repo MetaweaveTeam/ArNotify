@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import IndexView from "@/views/IndexView.vue";
+import IndexView from "@/views/MainView.vue";
 import ErrorView from "@/views/ErrorView.vue";
 
 const routes = () => {

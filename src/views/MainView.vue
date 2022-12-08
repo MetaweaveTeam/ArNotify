@@ -4,10 +4,9 @@ import { useMainStore } from "@/stores/store";
 import { inject, ref } from "vue";
 import type { Router } from "vue-router";
 import { TC } from "../types";
-import Loading from "./Loading.vue";
-import InstagramIcon from "@/components/logos/InstagramIcon.vue";
+import Loading from "../components/Loading.vue";
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
-import DiscordIcon from "@/components/logos/DiscordIcon.vue";
+import Index from "./Index.vue";
 
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
@@ -191,13 +190,6 @@ const unsubscribe = async (address: string) => {
   }
 };
 
-const contributing = () => {
-  window.open(
-    "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
-    "_blank"
-  );
-};
-
 const handleProtocolChangeRedirect = (selected: string) => {
   if (selected === "argora" || selected === "Data Protocol") {
     return;
@@ -259,20 +251,7 @@ onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 
     <!-- IF LOGGED OUT -->
     <div v-if="!store.logged_in">
-      <h1 className="text-4xl">Arweave native notification protocol.</h1>
-      <h2 className="text-3xl text-secondary">Select your notification medium</h2>
-      <label htmlFor="tc-modal" className="btn gap-2 btn-primary">
-        <TwitterIcon />
-        Twitter
-      </label>
-      <button @click="contributing()" className="btn gap-2 btn-neutral">
-        <InstagramIcon />
-        Instagram (later)
-      </button>
-      <button @click="contributing()" className="btn gap-2 btn-neutral">
-        <DiscordIcon />
-        Discord (soon)
-      </button>
+      <Index />
     </div>
 
     <!-- IF LOGGED IN -->
