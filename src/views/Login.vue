@@ -24,7 +24,7 @@ const contributing = () => {
     
       <p>Select the medium you want to receive notifications on:</p>
       <label htmlFor="tc-modal" className="btn gap-2 btn-primary">
-        <TwitterIcon />
+        <TwitterIcon size="30" />
         Twitter
       </label>
       <button @click="contributing()" className="btn gap-2 btn-neutral">

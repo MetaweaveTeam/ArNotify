@@ -11,7 +11,9 @@ module.exports = {
           accent: "#f817b5",
           neutral: "#2d1b69",
           "base-100": "#ffffff",
-          error: "#ff0000"
+          success: "#B9F43E",
+          error: "#ff0000",
+          info: "#1A98FF"
         },
       },
     ],
@@ -22,7 +24,4 @@ module.exports = {
 Greens:
 #8FEE9F
 #B9F43E
-
-pink:
-#EE16AD
 */

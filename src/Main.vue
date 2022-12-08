@@ -82,8 +82,6 @@ let refreshUser = async () => {
   }
 };
 
-const onWidthChange = () => (windowWidth.value = window.innerWidth);
-
 onMounted(async () => {
   let query = router.currentRoute.value.query;
   if (store.logged_in && !store.userInfo && !query.oauth_verifier) {
@@ -101,10 +99,7 @@ onMounted(async () => {
   await loginStep3();
 
   await denied();
-
-  window.addEventListener("resize", onWidthChange);
 });
-onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 </script>
 
 <template>
