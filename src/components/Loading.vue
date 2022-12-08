@@ -2,9 +2,8 @@
 </script>
 
 <template>
-  <div class="comp w-full  flex justify-center items-center justify-items-center">
-
-    <div class="lds-default ">
+  <div class="w-full flex justify-center items-center justify-items-center flex-col">
+    <div class="lds-default">
       <div></div>
       <div></div>
       <div></div>
@@ -18,15 +17,11 @@
       <div></div>
       <div></div>
     </div>
+    <div class="animate-pulse">loading</div>
   </div>
 </template>
 
-
 <style scoped>
-.comp {
-  height: 100vh;
-}
-
 .lds-default {
   display: inline-block;
   position: relative;

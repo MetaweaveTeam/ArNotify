@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import IndexView from "@/views/MainView.vue";
-import ErrorView from "@/views/ErrorView.vue";
+import Main from "@/Main.vue";
+import ErrorView from "@/views/Error.vue";
 
 const routes = () => {
   if (process.env.NODE_ENV === "development") {
@@ -8,7 +8,7 @@ const routes = () => {
       {
         path: "/",
         name: "home",
-        component: IndexView,
+        component: Main,
       },
       {
         path: "/error",
@@ -21,7 +21,7 @@ const routes = () => {
       {
         path: "/",
         name: "home",
-        component: IndexView,
+        component: Main,
       },
       {
         path: "/error",
