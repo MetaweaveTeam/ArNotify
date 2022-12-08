@@ -148,63 +148,7 @@ const handleAddressChange = (address: string) => {
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-5">
-    <div class="stats stats-vertical shadow-xl text-center">
-      <div class="stat">
-        <div class="stat-value">550</div>
-        <div class="stat-title">followers</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Twitter</div>
-        <div class="stat-value justify-self-center">
-          <TwitterIcon class="text-neutral" size="80" />
-        </div>
-        <div class="stat-desc">Selected bridge</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">@{{ store.userInfo && store.userInfo.main_handle }}</div>
-        <div class="stat-value">
-          <div class="avatar">
-            <div class="w-20 rounded-3xl shadow-xl ring ring-success ring-offset-base-100 ring-offset-2 m-2">
-              <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
-            </div>
-          </div>
-        </div>
-        <div class="stat-desc">Connected account</div>
-      </div>
-      <button v-if="store.logged_in" className="btn btn-error self-end" @click="logout">
-        Logout
-      </button>
-    </div>
-    <div class="stats stats-vertical shadow-xl text-center">
-      <div class="stat">
-        <div class="stat-title">Bonus</div>
-        <div class="stat-value">x 1.5</div>
-        <div class="stat-desc">Calculated according to the number of followers</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Total notifications</div>
-        <div class="stat-value">582</div>
-        <div class="stat-desc">↗︎ 400 (22%)</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Reach estimate</div>
-        <div class="stat-value">320,100</div>
-        <div class="stat-desc">↗︎ 400 (22%)</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Total claimed</div>
-        <div class="stat-value">20 $🐘MTT</div>
-        <div class="stat-desc">Bonus (x1.5)</div>
-      </div>
-      
-      <!-- <button v-if="store.logged_in" className="btn btn-neutral self-end" @click="disableNotifications">
-        Disable notifications
-      </button> -->
-    </div>
-  </div>
-
-  <div class="card shadow-xl my-2">
+  <div class="card card-bordered shadow-2xl my-5">
     <div class="card-body text-center">
       <div class="card-title m-auto pb-5">Your subscriptions</div>
       <table class="table w-full table-normal shadow-xl m-auto">
@@ -233,10 +177,10 @@ const handleAddressChange = (address: string) => {
               </div>
             </td>
             <td>
-              <input v-model="address" v-on:input="() => handleAddressChange(address)" type="text" className="input w-full input-bordered" />
+              <input v-model="address" v-on:input="() => handleAddressChange(address)" type="text" className="input w-full input-bordered border-primary" />
             </td>
             <td>
-              <select class="select select-bordered w-full" v-model="selected"
+              <select class="select select-bordered w-full border-secondary" v-model="selected"
                 @change="() => handleProtocolChangeRedirect(selected)">
                 <option>Data Protocol</option>
                 <option value="argora" selected>Argora (Metaweave.xyz)</option>
@@ -292,4 +236,61 @@ const handleAddressChange = (address: string) => {
       </table>
     </div>
   </div>
+  <div class="grid grid-cols-2 gap-5">
+    <div class="stats stats-vertical border shadow-xl text-center">
+      <div class="stat">
+        <div class="stat-value">550</div>
+        <div class="stat-title">followers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Twitter</div>
+        <div class="stat-value justify-self-center">
+          <TwitterIcon class="text-neutral" size="80" />
+        </div>
+        <div class="stat-desc">Selected bridge</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">@{{ store.userInfo && store.userInfo.main_handle }}</div>
+        <div class="stat-value">
+          <div class="avatar">
+            <div class="w-20 rounded-3xl shadow-xl ring ring-success ring-offset-base-100 ring-offset-2 m-2">
+              <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
+            </div>
+          </div>
+        </div>
+        <div class="stat-desc">Connected account</div>
+      </div>
+      <button v-if="store.logged_in" className="btn btn-error self-end" @click="logout">
+        Logout
+      </button>
+    </div>
+    <div class="stats stats-vertical border shadow-xl text-center">
+      <div class="stat">
+        <div class="stat-title">Bonus</div>
+        <div class="stat-value">x 1.5</div>
+        <div class="stat-desc">Calculated according to the number of followers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Total notifications</div>
+        <div class="stat-value">582</div>
+        <div class="stat-desc">↗︎ 400 (22%)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Reach estimate</div>
+        <div class="stat-value">320,100</div>
+        <div class="stat-desc">↗︎ 400 (22%)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Total claimed</div>
+        <div class="stat-value">20 $🐘MTT</div>
+        <div class="stat-desc">Bonus (x1.5)</div>
+      </div>
+      
+      <!-- <button v-if="store.logged_in" className="btn btn-neutral self-end" @click="disableNotifications">
+        Disable notifications
+      </button> -->
+    </div>
+  </div>
+
+  
 </template>

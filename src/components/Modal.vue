@@ -29,7 +29,7 @@ let loginStep1 = async () => {
 <template>
   <input type="checkbox" id="tc-modal" className="modal-toggle" />
   <div className="modal">
-    <div className="modal-box relative">
+    <div className="modal-box relative text-justify">
       <label for="tc-modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
       <h3 class="font-bold text-lg">MIT License</h3>
       <p class="my-4">Copyright (c) 2022 METAWEAVE.XYZ</p>

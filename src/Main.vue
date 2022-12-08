@@ -8,13 +8,12 @@ import Index from "./views/Login.vue";
 import Modal from "@/components/Modal.vue";
 import DashboardView from "./views/Dashboard.vue";
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
-
-let windowWidth = ref(window.innerWidth);
 
 let denied = async () => {
   let query = router.currentRoute.value.query;
@@ -108,4 +107,5 @@ onMounted(async () => {
   <div v-if="store.isLoading"><Loading /></div>
   <div v-else-if="store.logged_in && store.userInfo"><DashboardView /></div>
   <div v-else class="w-full"><Index /></div>
+  <Footer />
 </template>
