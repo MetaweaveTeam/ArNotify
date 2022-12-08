@@ -3,10 +3,10 @@ import { onMounted, onUnmounted } from "vue";
 import { useMainStore } from "@/stores/store";
 import { inject, ref } from "vue";
 import type { Router } from "vue-router";
-import { TC } from "../types";
-import Loading from "../components/Loading.vue";
+import Loading from "@/components/Loading.vue";
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
 import Index from "./Index.vue";
+import Modal from "@/components/Modal.vue";
 
 let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
@@ -16,23 +16,6 @@ const store = useMainStore();
 let address = "";
 let selected = "argora";
 let windowWidth = ref(window.innerWidth);
-
-let loginStep1 = async () => {
-  try {
-    store.setIsLoading(true);
-    let res = await axios.post(api + "/twitter/oauth/request_token");
-    window.location.href = res.data.url;
-  } catch (e: any) {
-    console.log(e);
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
-    const txid = router.currentRoute.value.params.txid;
-    if (txid) {
-      router.push(`/${txid}/error`);
-    } else {
-      router.push("/error");
-    }
-  }
-};
 
 let denied = async () => {
   let query = router.currentRoute.value.query;
@@ -230,18 +213,7 @@ onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 </script>
 
 <template>
-  <input type="checkbox" id="tc-modal" className="modal-toggle" />
-  <div className="modal">
-    <div className="modal-box">
-      <p className="py-4">{{ TC }}</p>
-      <div className="modal-action">
-        <label for="tc-modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-        <label htmlFor="tc-modal" @click="loginStep1" className="btn btn-primary">I agree to the terms and
-          conditions</label>
-      </div>
-    </div>
-  </div>
-
+  <Modal />
   <div v-if="store.isLoading">
     <Loading />
   </div>
