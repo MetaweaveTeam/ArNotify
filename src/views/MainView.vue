@@ -246,8 +246,9 @@ onUnmounted(() => window.removeEventListener("resize", onWidthChange));
     <Loading />
   </div>
 
-  <div v-else class="widget shadow-xl">
-    <img className="w-screen max-w-xl" src="https://arweave.net/fLKdBlb-6UTMEyQMzFoTb0osGa0oTzZmSebGw1TMgvM" />
+  <div v-else class="">
+    <img className="w-screen max-w-md m-auto my-5" src="https://arweave.net/XTqs1FwekqU_86H0S6UfgKfI4RhBfgiiYYttWNl4-As" alt="ArNotify logo" />
+    <h1 className="text-2xl text-center mb-10 font-semibold">Bridge Arweave to your followers on Web2</h1>
 
     <!-- IF LOGGED OUT -->
     <div v-if="!store.logged_in">
