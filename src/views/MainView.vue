@@ -52,7 +52,7 @@ let loginStep3 = async () => {
       store.setIsLoading(false);
     } catch (e: any) {
       console.log(e);
-      store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+      store.setError(e);
       const txid = router.currentRoute.value.params.txid;
       if (txid) {
         router.push(`/${txid}/error`);
@@ -73,7 +73,7 @@ const logout = async () => {
       method: "POST",
     });
   } catch (e: any) {
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+    store.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
@@ -93,7 +93,7 @@ const disableNotifications = async () => {
       method: "POST",
     });
   } catch (e: any) {
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+    store.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
@@ -112,7 +112,7 @@ let refreshUser = async () => {
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);
   } catch (e: any) {
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+    store.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
@@ -136,7 +136,7 @@ const subscribe = async (address: string) => {
     store.setSubscribePending(false);
   } catch (e: any) {
     console.error(e);
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+    store.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);

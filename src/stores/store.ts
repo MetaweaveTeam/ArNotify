@@ -15,7 +15,7 @@ export const useMainStore = defineStore("main", {
       arweaveAddress: "",
       isAddressValid: false,
       isLoading: true,
-      error: "",
+      error: null,
     };
   },
 

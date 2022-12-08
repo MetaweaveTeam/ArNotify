@@ -15,7 +15,7 @@ let loginStep1 = async () => {
     window.location.href = res.data.url;
   } catch (e: any) {
     console.log(e);
-    store.setError(`(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`);
+    store.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
