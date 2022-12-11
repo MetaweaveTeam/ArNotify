@@ -1,17 +1,51 @@
 <script setup lang="ts">
-import { inject, ref, onMounted, onUnmounted } from "vue";
+import { inject, onMounted, onUnmounted, ref } from "vue";
 import type { Router } from "vue-router";
 import { useMainStore } from '@/stores/store';
-import TwitterIcon from "@/components/logos/TwitterIcon.vue";
 
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
-
-let api = import.meta.env.VITE_BACKEND_URL;
+const api = import.meta.env.VITE_BACKEND_URL;
 
 let address = "";
 let selected = "argora";
+
+let windowWidth = ref(window.innerWidth);
+const onResize = () => windowWidth.value = window.innerWidth;
+onMounted(() => window.addEventListener('resize', onResize));
+onUnmounted(() => window.removeEventListener('resize', onResize));
+
+const handleAddressChange = (address: string) => store.setArweaveAddress(address);
+
+const handleProtocolChangeRedirect = (selected: string) => {
+  if (selected === "argora") {
+    return;
+  }
+  window.open(
+    "https://github.com/MetaweaveTeam/arNotify-node/blob/main/CONTRIBUTING.md",
+    "_blank"
+  );
+};
+
+const refreshUser = async () => {
+  try {
+    let res = await axios.get(`${api}/twitter/users/me`);
+    store.setUserInfo(res.data);
+
+    let subs = await axios.get(`${api}/subscriptions`);
+    store.setSubscriptions(subs.data.subscriptions);
+  } catch (e: any) {
+    store.setError(e);
+    const txid = router.currentRoute.value.params.txid;
+    if (txid) {
+      router.push(`/${txid}/error`);
+    } else {
+      router.push("/error");
+    }
+    console.log(e);
+  }
+};
 
 const subscribe = async (address: string) => {
   store.setSubscribePending(true);
@@ -34,35 +68,6 @@ const subscribe = async (address: string) => {
       router.push("/error");
     }
     store.setSubscribePending(false);
-  }
-};
-
-const handleProtocolChangeRedirect = (selected: string) => {
-  if (selected === "argora" || selected === "Data Protocol") {
-    return;
-  }
-  window.open(
-    "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
-    "_blank"
-  );
-};
-
-let refreshUser = async () => {
-  try {
-    let res = await axios.get(`${api}/twitter/users/me`);
-    store.setUserInfo(res.data);
-
-    let subs = await axios.get(`${api}/subscriptions`);
-    store.setSubscriptions(subs.data.subscriptions);
-  } catch (e: any) {
-    store.setError(e);
-    const txid = router.currentRoute.value.params.txid;
-    if (txid) {
-      router.push(`/${txid}/error`);
-    } else {
-      router.push("/error");
-    }
-    console.log(e);
   }
 };
 
@@ -91,64 +96,9 @@ const unsubscribe = async (address: string) => {
     store.setSubscribePending(false);
   }
 };
-
-const disableNotifications = async () => {
-  try {
-    localStorage.clear();
-    store.setLoggedIn(false);
-    await axios({
-      url: `${api}/twitter/exit`,
-      method: "POST",
-    });
-  } catch (e: any) {
-    store.setError(e);
-    const txid = router.currentRoute.value.params.txid;
-    if (txid) {
-      router.push(`/${txid}/error`);
-    } else {
-      router.push("/error");
-    }
-    console.error(e);
-  }
-};
-
-const logout = async () => {
-  try {
-    localStorage.clear();
-    store.setLoggedIn(false);
-    await axios({
-      url: `${api}/logout`,
-      method: "POST",
-    });
-  } catch (e: any) {
-    store.setError(e);
-    const txid = router.currentRoute.value.params.txid;
-    if (txid) {
-      router.push(`/${txid}/error`);
-    } else {
-      router.push("/error");
-    }
-    console.error(e);
-  }
-};
-
-let windowWidth = ref(window.innerWidth);
-const onResize = () => windowWidth.value = window.innerWidth
-
-onMounted(() => {
-  window.addEventListener('resize', onResize);
-})
-onUnmounted(() => { 
-  window.removeEventListener('resize', onResize); 
-})
-
-const handleAddressChange = (address: string) => {
-  store.setArweaveAddress(address);
-};
 </script>
 
 <template>
-  <div class="divider">Subscriptions</div>
   <table class="table w-full table-compact shadow-2xl">
     <thead>
       <tr>
@@ -158,7 +108,7 @@ const handleAddressChange = (address: string) => {
           </a>
         </th>
         <th class="max-w-xl">Arweave wallet address</th>
-        <th>Application</th>
+        <th>Application (data protocol)</th>
         <th></th>
       </tr>
       <tr>
@@ -181,10 +131,8 @@ const handleAddressChange = (address: string) => {
         <td>
           <select class="select select-bordered w-full border-secondary" v-model="selected"
             @change="() => handleProtocolChangeRedirect(selected)">
-            <option>Data Protocol</option>
-            <option value="argora" selected>Argora (Metaweave.xyz)</option>
-            <option value="permapages">permapages</option>
-            <option value="more">More</option>
+            <option value="argora" selected>Metaweave.xyz (Argora v1.2-beta)</option>
+            <option value="more">Custom</option>
           </select>
         </td>
         <td>
@@ -211,7 +159,7 @@ const handleAddressChange = (address: string) => {
         <td>
           <div v-if="item.protocol_name === 'argora'">
             <a href="https://metaweave.xyz" target="_blank">
-              Metaweave
+              Metaweave.xyz (Argora v1.2-beta)
             </a>
           </div>
           <div v-else></div>
@@ -235,57 +183,4 @@ const handleAddressChange = (address: string) => {
       </tr>
     </tfoot>
   </table>
-  <div class="divider">Stats</div>
-  <div class="flex sm:flex-row flex-col gap-5">
-    <div class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
-      
-      <div class="stat">
-        <div class="stat-title">Audience</div>
-        <div class="stat-value justify-self-center">
-          <TwitterIcon class="text-neutral" size="80" />
-        </div>
-        <div class="stat-desc">Twitter</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">@{{ store.userInfo && store.userInfo.main_handle }}</div>
-        <div class="stat-value">
-          <div class="avatar">
-            <div class="w-20 rounded-3xl shadow-xl ring ring-success ring-offset-base-100 ring-offset-2 m-2">
-              <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
-            </div>
-          </div>
-        </div>
-        <div class="stat-desc">Connected account</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">---</div>
-        <div class="stat-title">followers</div>
-      </div>
-      <button v-if="store.logged_in" className="btn btn-error self-end" @click="logout">
-        Logout
-      </button>
-    </div>
-    <div class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
-      <div class="stat">
-        <div class="stat-title">Balance</div>
-        <div class="stat-value">---</div>
-        <div class="stat-desc">$MTT</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Notifications sent</div>
-        <div class="stat-value">---</div>
-        <div class="stat-desc">tweets</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Earning rate</div>
-        <div class="stat-value">---</div>
-        <div class="stat-desc">$MTT / notification</div>
-      </div>
-      <!-- <button v-if="store.logged_in" className="btn btn-neutral self-end" @click="disableNotifications">
-        Disable notifications
-      </button> -->
-    </div>
-  </div>
-
-  
 </template>

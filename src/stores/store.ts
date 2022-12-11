@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 import type { Subscription } from "../types";
 import Arweave from "arweave";
-import { inject, ref } from "vue";
-import type { Router } from "vue-router";
 
 export const useMainStore = defineStore("main", {
   state: () => {
@@ -15,7 +13,7 @@ export const useMainStore = defineStore("main", {
       arweaveAddress: "",
       isAddressValid: false,
       isLoading: true,
-      error: null,
+      error: null as any,
     };
   },
 

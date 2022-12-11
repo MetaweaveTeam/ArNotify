@@ -6,7 +6,7 @@ import type { Router } from "vue-router";
 import Loading from "@/components/Loading.vue";
 import Index from "./views/Login.vue";
 import Modal from "@/components/Modal.vue";
-import DashboardView from "./views/Dashboard.vue";
+import DashboardView from "./views/Dashboard/Index.vue";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
