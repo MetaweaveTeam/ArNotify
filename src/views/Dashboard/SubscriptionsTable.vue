@@ -2,19 +2,36 @@
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import type { Router } from "vue-router";
 import { useMainStore } from '@/stores/store';
+import LoadingVue from "@/components/Loading.vue";
+
+import Account from 'arweave-account';
+const arAccount = new Account();
 
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
 const api = import.meta.env.VITE_BACKEND_URL;
 
-let address = "";
 let selected = "argora";
+
+const address = ref("");
+const isLoading = ref(true);
+const subscriptions = ref();
 
 let windowWidth = ref(window.innerWidth);
 const onResize = () => windowWidth.value = window.innerWidth;
 onMounted(() => window.addEventListener('resize', onResize));
 onUnmounted(() => window.removeEventListener('resize', onResize));
+
+const getArAccounts = store.subscriptions.map((subscription) =>
+  arAccount.get(subscription.arweave_address.toString())
+    .then(account => { return { subscription, arName: account.handle, arProfile: account.profile } })
+    .catch(e => console.log("arAccount.get() Error", e)));
+
+onMounted(async () => {
+  subscriptions.value = await Promise.all(getArAccounts)
+  isLoading.value = false;
+});
 
 const handleAddressChange = (address: string) => store.setArweaveAddress(address);
 
@@ -96,6 +113,10 @@ const unsubscribe = async (address: string) => {
     store.setSubscribePending(false);
   }
 };
+
+const copyUserWalletAddress = () => {
+  address.value = "todo"
+}
 </script>
 
 <template>
@@ -114,15 +135,19 @@ const unsubscribe = async (address: string) => {
       <tr>
         <td>
           <div v-if="store.isAddressValid">
-            <div class="tooltip tooltip-right" data-tip="Visit profile">
-              <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">✔️</a>
-            </div>
+            <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">
+              OK
+            </a>
           </div>
-          <div v-else-if="store.arweaveAddress.length <= 0"></div>
+          <div v-else-if="store.arweaveAddress.length <= 0">
+            <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
+              cp
+            </button>
+          </div>
           <div v-else>
-            <div class="tooltip tooltip-right" data-tip="Invalid wallet address format">
+            <button class="btn btn-error btn-outline btn-disabled" @click="() => copyUserWalletAddress()">
               ❌
-            </div>
+            </button>
           </div>
         </td>
         <td>
@@ -144,20 +169,28 @@ const unsubscribe = async (address: string) => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(item, index) in store.subscriptions" class="bg-success">
+      <tr v-if="isLoading">
+        <td colspan="4">
+          <LoadingVue />
+        </td>
+      </tr>
+      <tr v-else v-for="(item, index) in subscriptions">
         <th>
-          {{ index }}
-        </th>
-        <td>
-          <a class="wallet-address" :href="'https://r.metaweave.xyz/u/' + item.arweave_address" target="_blank">
-            <div v-if="windowWidth < 700">
-              {{ item.arweave_address.substring(0, 6) + "..." + item.arweave_address.slice(-6) }}
+          <div class="avatar">
+            <div class="w-12 mask mask-hexagon">
+              <a :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address" target="_blank">
+                <img :src="item.arProfile.avatarURL" />
+              </a>
             </div>
-            <div v-else>{{ item.arweave_address }}</div>
+          </div>
+        </th>
+        <td class="text-xl">
+          <a class="wallet-address" :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address" target="_blank">
+            {{ item.arName }}
           </a>
         </td>
         <td>
-          <div v-if="item.protocol_name === 'argora'">
+          <div v-if="item.subscription.protocol_name === 'argora'">
             <a href="https://metaweave.xyz" target="_blank">
               Metaweave.xyz (Argora v1.2-beta)
             </a>
@@ -165,7 +198,7 @@ const unsubscribe = async (address: string) => {
           <div v-else></div>
         </td>
         <td>
-          <button className="btn btn-warning" @click="() => unsubscribe(item.arweave_address as any)">
+          <button className="btn btn-warning" @click="() => unsubscribe(item.subscription.arweave_address as any)">
             Del
           </button>
         </td>
