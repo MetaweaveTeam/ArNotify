@@ -5,7 +5,7 @@ import DiscordIcon from "@/components/logos/DiscordIcon.vue";
 
 const contributing = () => {
   window.open(
-    "https://github.com/MetaweaveTeam/arnotify/CONTRIBUTING.md",
+    "https://github.com/MetaweaveTeam/arNotify-node/blob/main/CONTRIBUTING.md",
     "_blank"
   );
 };
