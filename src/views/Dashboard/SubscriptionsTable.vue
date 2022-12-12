@@ -122,24 +122,26 @@ const copyUserWalletAddress = () => {
 </script>
 
 <template>
-  <table class="table w-full table-compact shadow-2xl">
+  <table class="table table-compact shadow-2xl">
     <thead>
       <tr>
-        <th class="p-2">
+        <th>
           <a href="https://arprofile.org" target="_blank">
             <img src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg" height="100%" class="m-auto" />
           </a>
         </th>
-        <th class="max-w-xl">Arweave wallet address</th>
+        <th>Arweave wallet address</th>
         <th>Application (data protocol)</th>
         <th></th>
       </tr>
       <tr>
         <td>
-          <div v-if="store.isAddressValid">
-            <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">
-              OK
-            </a>
+          <div v-if="store.isAddressValid" class="avatar">
+            <div class="w-12 mask mask-hexagon">
+              <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">
+                <img :src="store.arProfile.avatarURL" />
+              </a>
+            </div>
           </div>
           <div v-else-if="store.arweaveAddress.length <= 0">
             <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
@@ -147,7 +149,7 @@ const copyUserWalletAddress = () => {
             </button>
           </div>
           <div v-else>
-            <button class="btn btn-error btn-outline btn-disabled" @click="() => copyUserWalletAddress()">
+            <button class="btn btn-error btn-outline btn-disabled">
               ❌
             </button>
           </div>
@@ -158,7 +160,7 @@ const copyUserWalletAddress = () => {
         <td>
           <select class="select select-bordered w-full border-secondary" v-model="selected"
             @change="() => handleProtocolChangeRedirect(selected)">
-            <option value="argora" selected>Metaweave.xyz (Argora v1.2-beta)</option>
+            <option value="argora" selected>Metaweave.xyz</option>
             <option value="more">Custom</option>
           </select>
         </td>
