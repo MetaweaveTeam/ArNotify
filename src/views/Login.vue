@@ -16,17 +16,20 @@ const contributing = () => {
     <figure><img className="sm:inline-flex hidden" src="https://arweave.net/fwtsWWs3s2j82WkvE_BGkSqt6R0yHBAs1mmmJDEqRjY" alt="Arweave"/></figure>
 
     <div className="card-body sm:w-2/3">
-      <h1 className="card-title m-auto">Arweave notification center</h1>
-      <p className="text-justify my-5">
-        Follow any wallet interactions with permaDapps on Arweave.
-        Bring real time notifications from <a href="https://arweave.org" target="_blank">Arweave</a> protocols to your web2 community.
+      <h1 className="card-title m-auto">Web3 notification center</h1>
+      <h2 className="text-xl m-auto">Out-Of-The-Box (OOTB)</h2>
+      <p className="text-center my-5">
+        Don't miss out on anything happening <span class="font-bold">on-chain</span>.
+        <br />
+        Notify your audience <span class="underline">in real time</span>.
       </p>
-    
-      <p>Select the medium you want to receive notifications on:</p>
+      <div class="divider m-0 font-bold">Try it now!</div>
+
       <label htmlFor="tc-modal" className="btn gap-2 btn-primary">
         <TwitterIcon size="30" />
         Twitter
       </label>
+      <div class="divider m-0">roadmap</div>
       <button @click="contributing()" className="btn gap-2 btn-neutral">
         <DiscordIcon />
         Discord (soon)
