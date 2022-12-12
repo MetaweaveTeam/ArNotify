@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore } from "@/stores/store";
+import { useMainStore } from "@/stores";
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 

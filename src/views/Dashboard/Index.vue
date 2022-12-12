@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, onMounted, onUnmounted } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore } from '@/stores/store';
+import { useMainStore } from '@/stores';
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
 import SubscriptionsTableVue from "./SubscriptionsTable.vue";
 

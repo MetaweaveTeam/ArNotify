@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMainStore } from "@/stores/store";
+import { useMainStore } from "@/stores";
 import { inject } from "vue";
 import type { Router } from "vue-router";
 import Header from "@/components/Header.vue";

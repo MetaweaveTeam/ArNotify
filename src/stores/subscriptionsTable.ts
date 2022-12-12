@@ -2,39 +2,25 @@ import { defineStore } from "pinia";
 import type { Subscription } from "../types";
 import Arweave from "arweave";
 
-export const useMainStore = defineStore("main", {
+export default defineStore("subscriptions", {
   state: () => {
-    const expiry = localStorage.getItem("expiry");
     return {
-      logged_in: expiry ? +expiry > Date.now() : false,
-      subscriptions: [] as Subscription[],
+
       userInfo: null as any,
+
+      subscriptions: [] as Subscription[],
       subscribePending: false,
       arweaveAddress: "",
-      isAddressValid: false,
-      isLoading: true,
-      error: null as any,
+      isAddressValid: false
     };
   },
 
   actions: {
-    setLoggedIn(isLoggedIn: boolean) {
-      this.logged_in = isLoggedIn;
-    },
-    setSubscribePending(isSubscribePending: boolean) {
-      this.subscribePending = isSubscribePending;
-    },
-    setUserInfo(userInfo: any) {
-      this.userInfo = userInfo;
-    },
     setSubscriptions(subscriptions: any) {
       this.subscriptions = subscriptions;
     },
-    setIsLoading(isLoading: any) {
-      this.isLoading = isLoading;
-    },
-    setError(error: any) {
-      this.error = error;
+    setUserInfo(userInfo: any) {
+      this.userInfo = userInfo;
     },
     setArweaveAddress(arweaveAddress: any) {
       this.arweaveAddress = arweaveAddress;

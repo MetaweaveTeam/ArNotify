@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore } from '@/stores/store';
+import { useMainStore, useSubscriptionsStore } from '@/stores';
 import LoadingVue from "@/components/Loading.vue";
 
 import Account from 'arweave-account';
@@ -9,13 +9,15 @@ const arAccount = new Account();
 
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
-const store = useMainStore();
+const store = useSubscriptionsStore();
+const storeGlobal = useMainStore();
 const api = import.meta.env.VITE_BACKEND_URL;
 
 let selected = "argora";
 
 const address = ref("");
 const isLoading = ref(true);
+const isPending = ref(true);
 const subscriptions = ref();
 
 let windowWidth = ref(window.innerWidth);
@@ -53,7 +55,7 @@ const refreshUser = async () => {
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);
   } catch (e: any) {
-    store.setError(e);
+    storeGlobal.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
@@ -65,7 +67,7 @@ const refreshUser = async () => {
 };
 
 const subscribe = async (address: string) => {
-  store.setSubscribePending(true);
+  isPending.value = true;
   try {
     await axios({
       url: `${api}/twitter/subscribe`,
@@ -74,23 +76,23 @@ const subscribe = async (address: string) => {
     });
 
     await refreshUser();
-    store.setSubscribePending(false);
+    isPending.value = false;
   } catch (e: any) {
     console.error(e);
-    store.setError(e);
+    storeGlobal.setError(e);
     const txid = router.currentRoute.value.params.txid;
     if (txid) {
       router.push(`/${txid}/error`);
     } else {
       router.push("/error");
     }
-    store.setSubscribePending(false);
+    isPending.value = false;
   }
 };
 
 const unsubscribe = async (address: string) => {
   try {
-    store.setSubscribePending(true);
+    isPending.value = true;
 
     await axios({
       url: `${api}/twitter/unsubscribe`,
@@ -98,10 +100,10 @@ const unsubscribe = async (address: string) => {
       data: { address: address, protocol: "argora" },
     });
     await refreshUser();
-    store.setSubscribePending(false);
+    isPending.value = false;
   } catch (e: any) {
     console.error(e);
-    store.setError(
+    storeGlobal.setError(
       `(${e.code}) ${e.message} \n\n More Details: \n${JSON.stringify(e)}`
     );
     const txid = router.currentRoute.value.params.txid;
@@ -110,7 +112,7 @@ const unsubscribe = async (address: string) => {
     } else {
       router.push("/error");
     }
-    store.setSubscribePending(false);
+    isPending.value = false;
   }
 };
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue";
-import { useMainStore } from "@/stores/store";
-import { inject, ref } from "vue";
+import { onMounted } from "vue";
+import { useMainStore, useSubscriptionsStore } from "@/stores";
+import { inject } from "vue";
 import type { Router } from "vue-router";
 import Loading from "@/components/Loading.vue";
 import Index from "./views/Login.vue";
@@ -14,6 +14,7 @@ let api = import.meta.env.VITE_BACKEND_URL;
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
+const subscriptionsStore = useSubscriptionsStore();
 
 let denied = async () => {
   let query = router.currentRoute.value.query;
@@ -68,7 +69,7 @@ let refreshUser = async () => {
     store.setUserInfo(res.data);
 
     let subs = await axios.get(`${api}/subscriptions`);
-    store.setSubscriptions(subs.data.subscriptions);
+    subscriptionsStore.setSubscriptions(subs.data.subscriptions);
   } catch (e: any) {
     store.setError(e);
     const txid = router.currentRoute.value.params.txid;
