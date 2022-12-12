@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Main from "@/Main.vue";
+import Main from "@/views/Index.vue";
 import ErrorView from "@/views/Error.vue";
 
 const routes = () => {

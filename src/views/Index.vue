@@ -4,9 +4,9 @@ import { useMainStore, useSubscriptionsStore } from "@/stores";
 import { inject } from "vue";
 import type { Router } from "vue-router";
 import Loading from "@/components/Loading.vue";
-import Index from "./views/Login.vue";
+import Index from "./Login.vue";
 import Modal from "@/components/Modal.vue";
-import DashboardView from "./views/Dashboard/Index.vue";
+import DashboardView from "./Dashboard/Index.vue";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
@@ -104,9 +104,9 @@ onMounted(async () => {
 
 <template>
   <Modal />
-    <Header />
-    <div v-if="store.isLoading"><Loading /></div>
-    <div v-else-if="store.logged_in && store.twitterAccount"><DashboardView /></div>
-    <div v-else class="w-full"><Index /></div>
-    <Footer />
+  <Header />
+  <div v-if="store.isLoading"><Loading /></div>
+  <div v-else-if="store.logged_in && store.twitterAccount"><DashboardView /></div>
+  <div v-else class="w-full"><Index /></div>
+  <Footer />
 </template>
