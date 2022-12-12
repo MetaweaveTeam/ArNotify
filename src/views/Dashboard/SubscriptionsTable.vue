@@ -50,7 +50,7 @@ const handleProtocolChangeRedirect = (selected: string) => {
 const refreshUser = async () => {
   try {
     let res = await axios.get(`${api}/twitter/users/me`);
-    store.setUserInfo(res.data);
+    storeGlobal.setTwitterAccount(res.data);
 
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);

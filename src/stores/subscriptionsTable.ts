@@ -5,9 +5,6 @@ import Arweave from "arweave";
 export default defineStore("subscriptions", {
   state: () => {
     return {
-
-      userInfo: null as any,
-
       subscriptions: [] as Subscription[],
       subscribePending: false,
       arweaveAddress: "",
@@ -18,9 +15,6 @@ export default defineStore("subscriptions", {
   actions: {
     setSubscriptions(subscriptions: any) {
       this.subscriptions = subscriptions;
-    },
-    setUserInfo(userInfo: any) {
-      this.userInfo = userInfo;
     },
     setArweaveAddress(arweaveAddress: any) {
       this.arweaveAddress = arweaveAddress;

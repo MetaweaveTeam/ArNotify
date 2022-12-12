@@ -32,7 +32,7 @@ let denied = async () => {
 let loginStep3 = async () => {
   let query = router.currentRoute.value.query;
   // we check if we have oauth_token && oauth_verifier
-  if (query.oauth_token && query.oauth_verifier && !store.userInfo) {
+  if (query.oauth_token && query.oauth_verifier && !store.twitterAccount) {
     try {
       let res = await axios.post(
         `${api}/twitter/oauth/access_token?oauth_token=${query.oauth_token}&oauth_verifier=${query.oauth_verifier}`
@@ -46,7 +46,7 @@ let loginStep3 = async () => {
         window.location.pathname;
       window.history.pushState({ path: newURL }, "", newURL);
       store.setLoggedIn(true);
-      store.setUserInfo(data);
+      store.setTwitterAccount(data);
       await refreshUser();
       store.setIsLoading(false);
     } catch (e: any) {
@@ -66,7 +66,7 @@ let loginStep3 = async () => {
 let refreshUser = async () => {
   try {
     let res = await axios.get(`${api}/twitter/users/me`);
-    store.setUserInfo(res.data);
+    store.setTwitterAccount(res.data);
 
     let subs = await axios.get(`${api}/subscriptions`);
     subscriptionsStore.setSubscriptions(subs.data.subscriptions);
@@ -84,11 +84,11 @@ let refreshUser = async () => {
 
 onMounted(async () => {
   let query = router.currentRoute.value.query;
-  if (store.logged_in && !store.userInfo && !query.oauth_verifier) {
+  if (store.logged_in && !store.twitterAccount && !query.oauth_verifier) {
     store.setIsLoading(true);
     await refreshUser();
     store.setIsLoading(false);
-  } else if (store.logged_in && store.userInfo) {
+  } else if (store.logged_in && store.twitterAccount) {
     store.setIsLoading(false);
   }
 
@@ -106,7 +106,7 @@ onMounted(async () => {
   <Modal />
     <Header />
     <div v-if="store.isLoading"><Loading /></div>
-    <div v-else-if="store.logged_in && store.userInfo"><DashboardView /></div>
+    <div v-else-if="store.logged_in && store.twitterAccount"><DashboardView /></div>
     <div v-else class="w-full"><Index /></div>
     <Footer />
 </template>

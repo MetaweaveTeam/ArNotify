@@ -5,9 +5,7 @@ export default defineStore("main", {
   state: () => {
     const expiry = localStorage.getItem("expiry");
     return {
-      
-      userInfo: null as any,
-
+      twitterAccount: null as any,
       logged_in: expiry ? +expiry > Date.now() : false,
       isLoading: true,
       error: null as any,
@@ -18,8 +16,8 @@ export default defineStore("main", {
     setLoggedIn(isLoggedIn: boolean) {
       this.logged_in = isLoggedIn;
     },
-    setUserInfo(userInfo: any) {
-      this.userInfo = userInfo;
+    setTwitterAccount(twitterAccount: any) {
+      this.twitterAccount = twitterAccount;
     },
     setIsLoading(isLoading: any) {
       this.isLoading = isLoading;

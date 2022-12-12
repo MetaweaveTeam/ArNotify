@@ -46,11 +46,11 @@ const logout = async () => {
         <div class="stat-desc">Twitter</div>
       </div>
       <div class="stat">
-        <div class="stat-title">@{{ store.userInfo && store.userInfo.main_handle }}</div>
+        <div class="stat-title">@{{ store.twitterAccount && store.twitterAccount.main_handle }}</div>
         <div class="stat-value">
           <div class="avatar">
             <div class="w-20 rounded-3xl shadow-xl ring ring-success ring-offset-base-100 ring-offset-2 m-2">
-              <img class="profile_pic" :src="store.userInfo && store.userInfo.photo_url" />
+              <img class="profile_pic" :src="store.twitterAccount && store.twitterAccount.photo_url" />
             </div>
           </div>
         </div>
