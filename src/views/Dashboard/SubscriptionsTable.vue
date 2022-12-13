@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore, useSubscriptionsStore } from '@/stores';
+import { useMainStore, useSubscriptionsStore } from "@/stores";
 import LoadingVue from "@/components/Loading.vue";
-
-import Account from 'arweave-account';
-const arAccount = new Account();
 
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
@@ -18,22 +15,6 @@ let selected = "argora";
 const address = ref("");
 const isLoading = ref(true);
 const isPending = ref(true);
-const subscriptions = ref();
-
-let windowWidth = ref(window.innerWidth);
-const onResize = () => windowWidth.value = window.innerWidth;
-onMounted(() => window.addEventListener('resize', onResize));
-onUnmounted(() => window.removeEventListener('resize', onResize));
-
-const getArAccounts = store.subscriptions.map((subscription) =>
-  arAccount.get(subscription.arweave_address.toString())
-    .then(account => { return { subscription, arName: account.handle, arProfile: account.profile } })
-    .catch(e => console.log("arAccount.get() Error", e)));
-
-onMounted(async () => {
-  subscriptions.value = await Promise.all(getArAccounts)
-  isLoading.value = false;
-});
 
 const handleAddressChange = (address: string) => store.setArweaveAddress(address);
 
@@ -49,11 +30,15 @@ const handleProtocolChangeRedirect = (selected: string) => {
 
 const refreshUser = async () => {
   try {
+    isLoading.value = true;
+
     let res = await axios.get(`${api}/twitter/users/me`);
     storeGlobal.setTwitterAccount(res.data);
 
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);
+
+    isLoading.value = false;
   } catch (e: any) {
     storeGlobal.setError(e);
     const txid = router.currentRoute.value.params.txid;
@@ -65,6 +50,8 @@ const refreshUser = async () => {
     console.log(e);
   }
 };
+
+onMounted(refreshUser);
 
 const subscribe = async (address: string) => {
   isPending.value = true;
@@ -117,8 +104,8 @@ const unsubscribe = async (address: string) => {
 };
 
 const copyUserWalletAddress = () => {
-  address.value = "todo"
-}
+  address.value = "todo";
+};
 </script>
 
 <template>
@@ -127,10 +114,14 @@ const copyUserWalletAddress = () => {
       <tr>
         <th>
           <a href="https://arprofile.org" target="_blank">
-            <img src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg" height="100%" class="m-auto" />
+            <img
+              src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg"
+              height="100%"
+              class="m-auto"
+            />
           </a>
         </th>
-        <th>Arweave wallet address</th>
+        <th>Arweave wallet</th>
         <th>Application (data protocol)</th>
         <th></th>
       </tr>
@@ -138,35 +129,49 @@ const copyUserWalletAddress = () => {
         <td>
           <div v-if="store.isAddressValid" class="avatar">
             <div class="w-12 mask mask-hexagon">
-              <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">
+              <a
+                :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress"
+                target="_blank"
+              >
                 <img :src="store.arProfile.avatarURL" />
               </a>
             </div>
           </div>
           <div v-else-if="store.arweaveAddress.length <= 0">
-            <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
+            <!-- <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
               cp
-            </button>
+            </button> -->
           </div>
           <div v-else>
-            <button class="btn btn-error btn-outline btn-disabled">
-              ❌
-            </button>
+            <button class="btn btn-error btn-outline btn-disabled">❌</button>
           </div>
         </td>
         <td>
-          <input placeholder="wallet address" v-model="address" v-on:input="() => handleAddressChange(address)" type="text" className="input w-full input-bordered border-primary" />
+          <input
+            placeholder="wallet address"
+            v-model="address"
+            v-on:input="() => handleAddressChange(address)"
+            type="text"
+            className="input w-full input-bordered border-primary"
+          />
         </td>
         <td>
-          <select class="select select-bordered w-full border-secondary" v-model="selected"
-            @change="() => handleProtocolChangeRedirect(selected)">
+          <select
+            class="select select-bordered w-full border-secondary"
+            v-model="selected"
+            @change="() => handleProtocolChangeRedirect(selected)"
+          >
             <option value="argora" selected>Metaweave.xyz</option>
             <option value="more">Custom</option>
           </select>
         </td>
         <td>
-          <button :disabled="!store.isAddressValid" class="btn btn-secondary"
-            v-bind:class="{ loading: store.subscribePending }" @click="() => subscribe(address)">
+          <button
+            :disabled="!store.isAddressValid"
+            class="btn btn-secondary"
+            v-bind:class="{ loading: store.subscribePending }"
+            @click="() => subscribe(address)"
+          >
             Add
           </button>
         </td>
@@ -178,18 +183,25 @@ const copyUserWalletAddress = () => {
           <LoadingVue />
         </td>
       </tr>
-      <tr v-else v-for="(item, index) in subscriptions">
+      <tr v-else v-for="(item, index) in store.notifs">
         <th>
           <div class="avatar">
             <div class="w-12 mask mask-hexagon">
-              <a :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address" target="_blank">
+              <a
+                :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address"
+                target="_blank"
+              >
                 <img :src="item.arProfile.avatarURL" />
               </a>
             </div>
           </div>
         </th>
         <td class="text-xl">
-          <a class="wallet-address" :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address" target="_blank">
+          <a
+            class="wallet-address"
+            :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address"
+            target="_blank"
+          >
             {{ item.arName }}
           </a>
         </td>
@@ -202,7 +214,10 @@ const copyUserWalletAddress = () => {
           <div v-else></div>
         </td>
         <td>
-          <button className="btn btn-warning" @click="() => unsubscribe(item.subscription.arweave_address as any)">
+          <button
+            className="btn btn-warning"
+            @click="() => unsubscribe(item.subscription.arweave_address as any)"
+          >
             Del
           </button>
         </td>
@@ -212,8 +227,23 @@ const copyUserWalletAddress = () => {
       <tr>
         <td></td>
         <td colspan="3">
-          <div v-if="!store.subscriptions.length" class="alert border-2 border-info max-w-xl text-neutral">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div
+            v-if="!store.notifs.length"
+            class="alert border-2 border-info max-w-xl text-neutral"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="stroke-current flex-shrink-0 w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
             You have no active subscriptions at the moment.
           </div>
         </td>

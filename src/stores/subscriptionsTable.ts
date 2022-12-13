@@ -1,14 +1,24 @@
 import { defineStore } from "pinia";
-import type { Subscription } from "../types";
+import type { Notif, Subscription } from "../types";
 import Arweave from "arweave";
 import ArAccount, { type ArProfile } from "arweave-account";
 
 const arAccount = new ArAccount();
 
+const getArAccounts = (subscription: Subscription) =>
+  arAccount.get(subscription.arweave_address.toString())
+  .then((account) => {
+    return { subscription, arName: account.handle, arProfile: account.profile };
+  })
+  .catch((e) => {
+    console.log("arAccount.get() Error", e)
+    return null
+  })
+
 export default defineStore("subscriptions", {
   state: () => {
     return {
-      subscriptions: [] as Subscription[],
+      notifs: [] as Notif[],
       subscribePending: false,
       isAddressValid: false,
       arweaveAddress: "",
@@ -18,8 +28,9 @@ export default defineStore("subscriptions", {
   },
 
   actions: {
-    setSubscriptions(subscriptions: any) {
-      this.subscriptions = subscriptions;
+    async setSubscriptions(subscriptions: Subscription[]) {
+      this.notifs = (await Promise.all(subscriptions.map(getArAccounts)))
+        .filter((a): a is Notif => a !== null);
     },
     async setArweaveAddress(arweaveAddress: string) {
       this.arweaveAddress = arweaveAddress;
