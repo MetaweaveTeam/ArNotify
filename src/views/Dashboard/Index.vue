@@ -59,7 +59,7 @@ const logout = async () => {
       </div>
       <div class="stat">
         <div class="stat-value">
-          {{ store.twitterAccount.followers_count || 0 }}
+          {{ store.twitterAccount.followers_count }}
         </div>
         <div class="stat-title">followers</div>
       </div>
@@ -75,13 +75,15 @@ const logout = async () => {
       </div>
       <div class="stat">
         <div class="stat-title">Notifications sent</div>
-        <div class="stat-value">---</div>
+        <div class="stat-value">
+          {{ store.twitterAccount.tweets_count }}
+        </div>
         <div class="stat-desc">tweets</div>
       </div>
       <div class="stat">
         <div class="stat-title">Earning rate</div>
         <div class="stat-value">
-          {{ store.twitterAccount.earning_rate || 0 }}
+          {{ store.twitterAccount.earning_rate }}
         </div>
         <div class="stat-desc">$MTT / notification</div>
       </div>
