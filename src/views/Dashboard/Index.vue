@@ -105,7 +105,7 @@ const logout = async () => {
         Logout
       </button>
     </div>
-    <div v-if="store.arweaveWallet" class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
+    <div v-if="store.twitterAccount.arweave_address" class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
       <div class="stat">
         <div class="stat-title">Balance</div>
         <div class="stat-value">---</div>
@@ -126,7 +126,7 @@ const logout = async () => {
         <div class="stat-desc">$MTT / notification</div>
       </div>
     </div>
-    <div class="stats sm:w-1/2 place-items-center stats-vertical border shadow-xl text-center" v-else>
+    <div v-else class="stats sm:w-1/2 place-items-center stats-vertical border shadow-xl text-center">
       <div class="stat">
         <div class="stat-title">Connect Arweave wallet</div>
         <div class="stat-value">Start Earning</div>
