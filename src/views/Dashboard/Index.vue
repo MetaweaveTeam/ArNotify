@@ -80,7 +80,9 @@ const logout = async () => {
       </div>
       <div class="stat">
         <div class="stat-title">Earning rate</div>
-        <div class="stat-value">---</div>
+        <div class="stat-value">
+          {{ store.twitterAccount.earning_rate || 0 }}
+        </div>
         <div class="stat-desc">$MTT / notification</div>
       </div>
     </div>

@@ -117,8 +117,8 @@ const unsubscribe = async (address: string) => {
 };
 
 const copyUserWalletAddress = () => {
-  address.value = "todo"
-}
+  address.value = "todo";
+};
 </script>
 
 <template>
