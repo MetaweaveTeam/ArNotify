@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore } from '@/stores';
+import { useMainStore } from "@/stores";
 import TwitterIcon from "@/components/logos/TwitterIcon.vue";
 import SubscriptionsTableVue from "./SubscriptionsTable.vue";
 
@@ -37,7 +37,6 @@ const logout = async () => {
   <div class="divider">Stats</div>
   <div class="flex sm:flex-row flex-col gap-5">
     <div class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
-      
       <div class="stat">
         <div class="stat-title">Audience</div>
         <div class="stat-value justify-self-center">
@@ -46,7 +45,9 @@ const logout = async () => {
         <div class="stat-desc">Twitter</div>
       </div>
       <div class="stat">
-        <div class="stat-title">@{{ store.twitterAccount && store.twitterAccount.main_handle }}</div>
+        <div class="stat-title">
+          @{{ store.twitterAccount && store.twitterAccount.main_handle }}
+        </div>
         <div class="stat-value">
           <div class="avatar">
             <div class="w-20 rounded-3xl shadow-xl ring ring-success ring-offset-base-100 ring-offset-2 m-2">
@@ -57,7 +58,9 @@ const logout = async () => {
         <div class="stat-desc">Connected account</div>
       </div>
       <div class="stat">
-        <div class="stat-value">---</div>
+        <div class="stat-value">
+          {{ store.twitterAccount.followers_count || 0 }}
+        </div>
         <div class="stat-title">followers</div>
       </div>
       <button v-if="store.logged_in" className="btn btn-error self-end" @click="logout">

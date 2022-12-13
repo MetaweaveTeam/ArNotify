@@ -105,8 +105,14 @@ onMounted(async () => {
 <template>
   <Modal />
   <Header />
-  <div v-if="store.isLoading"><Loading /></div>
-  <div v-else-if="store.logged_in && store.twitterAccount"><DashboardView /></div>
-  <div v-else class="w-full"><Index /></div>
+  <div v-if="store.isLoading">
+    <Loading />
+  </div>
+  <div v-else-if="store.logged_in && store.twitterAccount">
+    <DashboardView />
+  </div>
+  <div v-else class="w-full">
+    <Index />
+  </div>
   <Footer />
 </template>
