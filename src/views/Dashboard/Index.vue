@@ -107,6 +107,24 @@ const logout = async () => {
     </div>
     <div v-if="store.twitterAccount.arweave_address" class="stats sm:w-1/2 stats-vertical border shadow-xl text-center">
       <div class="stat">
+        <div class="stat-title">
+          <p class="text-lg">Arweave wallet</p>
+        </div>
+        <div class="stat-value">
+          <p class="text-base">
+            {{ store.twitterAccount.arweave_address.substring(0, 9) + "..." +
+                store.twitterAccount.arweave_address.substring(store.twitterAccount.arweave_address.length - 6)
+            }}
+          </p>
+        </div>
+        <div class="stat-desc"><span class="text-emerald-500">Connected</span></div>
+        <div class="stat-actions">
+          <label for="changeWallet" class="btn btn-sm btn-outline btn-primary">
+            Change Wallet
+          </label>
+        </div>
+      </div>
+      <div class="stat">
         <div class="stat-title">Balance</div>
         <div class="stat-value">---</div>
         <div class="stat-desc">$MTT</div>
@@ -125,6 +143,28 @@ const logout = async () => {
         </div>
         <div class="stat-desc">$MTT / notification</div>
       </div>
+      <input type="checkbox" id="changeWallet" class="modal-toggle" />
+      <label for="changeWallet" class="modal modal-bottom sm:modal-middle cursor-pointer">
+        <label class="modal-box relative" for="">
+          <label for="changeWallet" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+          <h3 class="font-bold text-lg">Connect Arweave Wallet</h3>
+          <p class="py-4">
+            Connect your Arweave wallet and start earnings
+          </p>
+          <div class="modal-action justify-center">
+            <a class="btn" @click="connectWallet('arconnect')">
+              <img src="https://arweave.net/EoHJJ6jtlKjRk-O94J1kKzQsQ-28dgZ6U7z2FVK6pOQ" alt="ArConnect"
+                class="w-8 h-8" />
+              <span>ArConnect</span>
+            </a>
+            <a class="btn" @click="connectWallet('webwallet')">
+              <img src="https://arweave.net/mYIoULR7yGYs_6DT1_l0kV1DvYTxyfIm0YgWFZyr6l0" alt="arweave.app"
+                class="w-8 h-8" />
+              <span>arweave.app</span>
+            </a>
+          </div>
+        </label>
+      </label>
     </div>
     <div v-else class="stats sm:w-1/2 place-items-center stats-vertical border shadow-xl text-center">
       <div class="stat">
