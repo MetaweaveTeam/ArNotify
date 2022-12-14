@@ -36,8 +36,6 @@ export default defineStore("subscriptions", {
       this.arweaveAddress = arweaveAddress;
 
       try {
-        console.log("fdfsd");
-        
         const key = Arweave.utils.b64UrlToBuffer(arweaveAddress);
         
         if (key.length === 32) {

@@ -53,17 +53,19 @@ const refreshUser = async () => {
 
 onMounted(refreshUser);
 
-const subscribe = async (address: string) => {
+const subscribe = async (addr: string) => {
   isPending.value = true;
   try {
     await axios({
       url: `${api}/twitter/subscribe`,
       method: "POST",
-      data: { address: address, protocol: "argora" },
+      data: { address: addr, protocol: "argora" },
     });
 
     await refreshUser();
     isPending.value = false;
+    store.setArweaveAddress("");
+    address.value = ""
   } catch (e: any) {
     console.error(e);
     storeGlobal.setError(e);
