@@ -1,3 +1,4 @@
+import { Arweave } from "arweave";
 import { defineStore } from "pinia";
 
 export default defineStore("main", {
@@ -9,6 +10,7 @@ export default defineStore("main", {
       isLoading: true,
       error: null as any,
       arweaveWallet: null as any,
+      arweaveBalance: null as any,
     };
   },
 
@@ -27,6 +29,9 @@ export default defineStore("main", {
     },
     setArweaveWallet(arweaveWallet: any) {
       this.arweaveWallet = arweaveWallet;
+    },
+    setArweaveBalance(balance: any) {
+      this.arweaveBalance = balance;
     },
   },
 });

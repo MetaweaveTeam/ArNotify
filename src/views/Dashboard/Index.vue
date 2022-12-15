@@ -45,6 +45,7 @@ async function connectWallet(walletName: "arconnect" | "webwallet") {
   });
 
   store.setArweaveWallet(user.data.arweave_address);
+  console.log("Connected to wallet", user.data.arweave_address);
   return user.data.arweave_address;
 }
 
@@ -112,12 +113,18 @@ const logout = async () => {
         </div>
         <div class="stat-value">
           <p class="text-base">
-            {{ store.twitterAccount.arweave_address.substring(0, 9) + "..." +
-                store.twitterAccount.arweave_address.substring(store.twitterAccount.arweave_address.length - 6)
+            {{
+                store.twitterAccount.arweave_address.substring(0, 9) +
+                "..." +
+                store.twitterAccount.arweave_address.substring(
+                  store.twitterAccount.arweave_address.length - 6
+                )
             }}
           </p>
         </div>
-        <div class="stat-desc"><span class="text-emerald-500">Connected</span></div>
+        <div class="stat-desc">
+          <span class="text-emerald-500">Connected</span>
+        </div>
         <div class="stat-actions">
           <label for="changeWallet" class="btn btn-sm btn-outline btn-primary">
             Change Wallet
@@ -126,7 +133,7 @@ const logout = async () => {
       </div>
       <div class="stat">
         <div class="stat-title">Balance</div>
-        <div class="stat-value">---</div>
+        <div class="stat-value">{{ store.arweaveBalance || 0 }}</div>
         <div class="stat-desc">$MTT</div>
       </div>
       <div class="stat">
@@ -148,9 +155,7 @@ const logout = async () => {
         <label class="modal-box relative" for="">
           <label for="changeWallet" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
           <h3 class="font-bold text-lg">Connect Arweave Wallet</h3>
-          <p class="py-4">
-            Connect your Arweave wallet and start earnings
-          </p>
+          <p class="py-4">Connect your Arweave wallet and start earnings</p>
           <div class="modal-action justify-center">
             <a class="btn" @click="connectWallet('arconnect')">
               <img src="https://arweave.net/EoHJJ6jtlKjRk-O94J1kKzQsQ-28dgZ6U7z2FVK6pOQ" alt="ArConnect"
