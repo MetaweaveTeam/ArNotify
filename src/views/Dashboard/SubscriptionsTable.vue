@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import type { Router } from "vue-router";
-import { useMainStore, useSubscriptionsStore } from '@/stores';
+import { useMainStore, useSubscriptionsStore } from "@/stores";
 import LoadingVue from "@/components/Loading.vue";
-
-import Account from 'arweave-account';
-const arAccount = new Account();
 
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
@@ -18,22 +15,6 @@ let selected = "argora";
 const address = ref("");
 const isLoading = ref(true);
 const isPending = ref(true);
-const subscriptions = ref();
-
-let windowWidth = ref(window.innerWidth);
-const onResize = () => windowWidth.value = window.innerWidth;
-onMounted(() => window.addEventListener('resize', onResize));
-onUnmounted(() => window.removeEventListener('resize', onResize));
-
-const getArAccounts = store.subscriptions.map((subscription) =>
-  arAccount.get(subscription.arweave_address.toString())
-    .then(account => { return { subscription, arName: account.handle, arProfile: account.profile } })
-    .catch(e => console.log("arAccount.get() Error", e)));
-
-onMounted(async () => {
-  subscriptions.value = await Promise.all(getArAccounts)
-  isLoading.value = false;
-});
 
 const handleAddressChange = (address: string) => store.setArweaveAddress(address);
 
@@ -49,11 +30,15 @@ const handleProtocolChangeRedirect = (selected: string) => {
 
 const refreshUser = async () => {
   try {
+    isLoading.value = true;
+
     let res = await axios.get(`${api}/twitter/users/me`);
     storeGlobal.setTwitterAccount(res.data);
 
     let subs = await axios.get(`${api}/subscriptions`);
     store.setSubscriptions(subs.data.subscriptions);
+
+    isLoading.value = false;
   } catch (e: any) {
     storeGlobal.setError(e);
     const txid = router.currentRoute.value.params.txid;
@@ -66,17 +51,21 @@ const refreshUser = async () => {
   }
 };
 
-const subscribe = async (address: string) => {
+onMounted(refreshUser);
+
+const subscribe = async (addr: string) => {
   isPending.value = true;
   try {
     await axios({
       url: `${api}/twitter/subscribe`,
       method: "POST",
-      data: { address: address, protocol: "argora" },
+      data: { address: addr, protocol: "argora" },
     });
 
     await refreshUser();
     isPending.value = false;
+    store.setArweaveAddress("");
+    address.value = ""
   } catch (e: any) {
     console.error(e);
     storeGlobal.setError(e);
@@ -130,7 +119,7 @@ const copyUserWalletAddress = () => {
             <img src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg" height="100%" class="m-auto" />
           </a>
         </th>
-        <th>Arweave wallet address</th>
+        <th>Arweave wallet</th>
         <th>Application (data protocol)</th>
         <th></th>
       </tr>
@@ -144,14 +133,12 @@ const copyUserWalletAddress = () => {
             </div>
           </div>
           <div v-else-if="store.arweaveAddress.length <= 0">
-            <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
+            <!-- <button class="btn btn-primary" @click="() => copyUserWalletAddress()">
               cp
-            </button>
+            </button> -->
           </div>
           <div v-else>
-            <button class="btn btn-error btn-outline btn-disabled">
-              ❌
-            </button>
+            <button class="btn btn-error btn-outline btn-disabled">❌</button>
           </div>
         </td>
         <td>
@@ -179,7 +166,7 @@ const copyUserWalletAddress = () => {
           <LoadingVue />
         </td>
       </tr>
-      <tr v-else v-for="(item, index) in subscriptions">
+      <tr v-else v-for="(item, index) in store.notifs">
         <th>
           <div class="avatar">
             <div class="w-12 mask mask-hexagon">
@@ -214,7 +201,7 @@ const copyUserWalletAddress = () => {
       <tr>
         <td></td>
         <td colspan="3">
-          <div v-if="!store.subscriptions.length" class="alert border-2 border-info max-w-xl text-neutral">
+          <div v-if="!store.notifs.length" class="alert border-2 border-info max-w-xl text-neutral">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
               class="stroke-current flex-shrink-0 w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
