@@ -23,7 +23,7 @@ export default defineStore("subscriptions", {
       isAddressValid: false,
       arweaveAddress: "",
       arName: "",
-      arProfile: {} as ArProfile
+      arProfile: {} as ArProfile,
     };
   },
 
@@ -37,7 +37,7 @@ export default defineStore("subscriptions", {
 
       try {
         const key = Arweave.utils.b64UrlToBuffer(arweaveAddress);
-        
+
         if (key.length === 32) {
           const { handle, profile } = await arAccount.get(arweaveAddress);
           this.arName = handle;
@@ -48,7 +48,7 @@ export default defineStore("subscriptions", {
         }
       } catch (e) {
         console.log("ERRRRROR");
-        
+
         this.isAddressValid = false;
       }
     },

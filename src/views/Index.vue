@@ -11,6 +11,7 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
 let api = import.meta.env.VITE_BACKEND_URL;
+
 const axios: any = inject("axios");
 const router: Router = inject("router")!;
 const store = useMainStore();
@@ -70,6 +71,9 @@ let refreshUser = async () => {
 
     let subs = await axios.get(`${api}/subscriptions`);
     subscriptionsStore.setSubscriptions(subs.data.subscriptions);
+
+    const balance = res.data.balance;
+    store.setArweaveBalance(balance);
   } catch (e: any) {
     store.setError(e);
     const txid = router.currentRoute.value.params.txid;
@@ -105,8 +109,14 @@ onMounted(async () => {
 <template>
   <Modal />
   <Header />
-  <div v-if="store.isLoading"><Loading /></div>
-  <div v-else-if="store.logged_in && store.twitterAccount"><DashboardView /></div>
-  <div v-else class="w-full"><Index /></div>
+  <div v-if="store.isLoading">
+    <Loading />
+  </div>
+  <div v-else-if="store.logged_in && store.twitterAccount">
+    <DashboardView />
+  </div>
+  <div v-else class="w-full">
+    <Index />
+  </div>
   <Footer />
 </template>

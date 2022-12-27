@@ -1,5 +1,5 @@
+import { Arweave } from "arweave";
 import { defineStore } from "pinia";
-import Arweave from "arweave";
 
 export default defineStore("main", {
   state: () => {
@@ -9,6 +9,8 @@ export default defineStore("main", {
       logged_in: expiry ? +expiry > Date.now() : false,
       isLoading: true,
       error: null as any,
+      arweaveWallet: null as any,
+      arweaveBalance: null as any,
     };
   },
 
@@ -24,6 +26,12 @@ export default defineStore("main", {
     },
     setError(error: any) {
       this.error = error;
+    },
+    setArweaveWallet(arweaveWallet: any) {
+      this.arweaveWallet = arweaveWallet;
+    },
+    setArweaveBalance(balance: any) {
+      this.arweaveBalance = balance;
     },
   },
 });

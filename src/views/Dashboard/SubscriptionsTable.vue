@@ -116,11 +116,7 @@ const copyUserWalletAddress = () => {
       <tr>
         <th>
           <a href="https://arprofile.org" target="_blank">
-            <img
-              src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg"
-              height="100%"
-              class="m-auto"
-            />
+            <img src="https://arweave.net/d8iSwXb6CFT17sEMzNFng_bPtpOIVsXY5M-ZtjRrKkg" height="100%" class="m-auto" />
           </a>
         </th>
         <th>Arweave wallet</th>
@@ -131,10 +127,7 @@ const copyUserWalletAddress = () => {
         <td>
           <div v-if="store.isAddressValid" class="avatar">
             <div class="w-12 mask mask-hexagon">
-              <a
-                :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress"
-                target="_blank"
-              >
+              <a :href="'https://r.metaweave.xyz/u/' + store.arweaveAddress" target="_blank">
                 <img :src="store.arProfile.avatarURL" />
               </a>
             </div>
@@ -149,31 +142,19 @@ const copyUserWalletAddress = () => {
           </div>
         </td>
         <td>
-          <input
-            placeholder="wallet address"
-            v-model="address"
-            v-on:input="() => handleAddressChange(address)"
-            type="text"
-            className="input w-full input-bordered border-primary"
-          />
+          <input placeholder="wallet address" v-model="address" v-on:input="() => handleAddressChange(address)"
+            type="text" className="input w-full input-bordered border-primary" />
         </td>
         <td>
-          <select
-            class="select select-bordered w-full border-secondary"
-            v-model="selected"
-            @change="() => handleProtocolChangeRedirect(selected)"
-          >
+          <select class="select select-bordered w-full border-secondary" v-model="selected"
+            @change="() => handleProtocolChangeRedirect(selected)">
             <option value="argora" selected>Metaweave.xyz</option>
             <option value="more">Custom</option>
           </select>
         </td>
         <td>
-          <button
-            :disabled="!store.isAddressValid"
-            class="btn btn-secondary"
-            v-bind:class="{ loading: store.subscribePending }"
-            @click="() => subscribe(address)"
-          >
+          <button :disabled="!store.isAddressValid" class="btn btn-secondary"
+            v-bind:class="{ loading: store.subscribePending }" @click="() => subscribe(address)">
             Add
           </button>
         </td>
@@ -189,21 +170,15 @@ const copyUserWalletAddress = () => {
         <th>
           <div class="avatar">
             <div class="w-12 mask mask-hexagon">
-              <a
-                :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address"
-                target="_blank"
-              >
+              <a :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address" target="_blank">
                 <img :src="item.arProfile.avatarURL" />
               </a>
             </div>
           </div>
         </th>
         <td class="text-xl">
-          <a
-            class="wallet-address"
-            :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address"
-            target="_blank"
-          >
+          <a class="wallet-address" :href="'https://r.metaweave.xyz/u/' + item.subscription.arweave_address"
+            target="_blank">
             {{ item.arName }}
           </a>
         </td>
@@ -216,10 +191,7 @@ const copyUserWalletAddress = () => {
           <div v-else></div>
         </td>
         <td>
-          <button
-            className="btn btn-warning"
-            @click="() => unsubscribe(item.subscription.arweave_address as any)"
-          >
+          <button className="btn btn-warning" @click="() => unsubscribe(item.subscription.arweave_address as any)">
             Del
           </button>
         </td>
@@ -229,22 +201,11 @@ const copyUserWalletAddress = () => {
       <tr>
         <td></td>
         <td colspan="3">
-          <div
-            v-if="!store.notifs.length"
-            class="alert border-2 border-info max-w-xl text-neutral"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="stroke-current flex-shrink-0 w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
+          <div v-if="!store.notifs.length" class="alert border-2 border-info max-w-xl text-neutral">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              class="stroke-current flex-shrink-0 w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             You have no active subscriptions at the moment.
           </div>

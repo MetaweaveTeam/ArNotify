@@ -1,7 +1,4 @@
-import main from "./main"
-import subscriptionsTable from "./subscriptionsTable"
+import main from "./main";
+import subscriptionsTable from "./subscriptionsTable";
 
-export {
-  main as useMainStore,
-  subscriptionsTable as useSubscriptionsStore
-}
+export { main as useMainStore, subscriptionsTable as useSubscriptionsStore };
