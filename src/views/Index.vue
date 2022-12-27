@@ -9,8 +9,6 @@ import Modal from "@/components/Modal.vue";
 import DashboardView from "./Dashboard/Index.vue";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import { readContract } from "smartweave";
-import Arweave from "arweave";
 
 let api = import.meta.env.VITE_BACKEND_URL;
 
@@ -74,17 +72,7 @@ let refreshUser = async () => {
     let subs = await axios.get(`${api}/subscriptions`);
     subscriptionsStore.setSubscriptions(subs.data.subscriptions);
 
-    const arweave = await Arweave.init({
-      host: "arweave.net",
-      port: 443,
-      protocol: "https",
-    });
-
-    const contractId = "AX9xdGTc5aLk67ryWxMSy99_TGF0-WuiuDGpmtYccN8";
-
-    const contractState = await readContract(arweave, contractId);
-    const balance = contractState.balances[store.twitterAccount.arweave_address];
-
+    const balance = res.data.balance;
     store.setArweaveBalance(balance);
   } catch (e: any) {
     store.setError(e);
